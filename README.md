@@ -2,7 +2,7 @@
 
 This repository shows an agent that writes configuration rows into a database. The rules for those rows live in PostgreSQL, not in the prompt, and every rejection names the rule that failed so the agent knows what to change.
 
-What exists so far is the database layer: the schema, the connection code for Aurora and for local Docker, and the parsers that load the catalog from the manual in `manuals/`.
+What exists so far is the database layer (the schema, the connection code for Aurora and for local Docker, and the parsers that load the catalog from the manual in `manuals/`) and the writer agent with its run script, `scripts/run_writer.py`.
 
 ## Prerequisites
 
