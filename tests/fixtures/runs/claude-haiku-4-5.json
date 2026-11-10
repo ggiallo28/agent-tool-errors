@@ -1,0 +1,8 @@
+{
+  "model_id": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+  "label": "claude-haiku-4-5",
+  "mode": "instructive",
+  "commit": "0123456789abcdef0123456789abcdef01234567",
+  "started_at": "2026-01-01T00:02:00Z",
+  "error": "AccessDeniedException: You don't have access to the model with the specified model ID."
+}
