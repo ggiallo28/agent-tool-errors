@@ -1,0 +1,42 @@
+[
+  {
+    "label": "claude-sonnet-4-6",
+    "name": "Claude Sonnet 4.6",
+    "model_id": "us.anthropic.claude-sonnet-4-6",
+    "input_usd_per_million": 3.00,
+    "output_usd_per_million": 15.00,
+    "price_source": "Bedrock pricing page"
+  },
+  {
+    "label": "claude-haiku-4-5",
+    "name": "Claude Haiku 4.5",
+    "model_id": "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "input_usd_per_million": 1.00,
+    "output_usd_per_million": 5.00,
+    "price_source": "Bedrock pricing page"
+  },
+  {
+    "label": "nova-2-lite",
+    "name": "Amazon Nova 2 Lite",
+    "model_id": "us.amazon.nova-2-lite-v1:0",
+    "input_usd_per_million": 0.33,
+    "output_usd_per_million": 2.75,
+    "price_source": "AWS Price List API"
+  },
+  {
+    "label": "nova-micro",
+    "name": "Amazon Nova Micro",
+    "model_id": "us.amazon.nova-micro-v1:0",
+    "input_usd_per_million": 0.035,
+    "output_usd_per_million": 0.14,
+    "price_source": "AWS Price List API"
+  },
+  {
+    "label": "ministral-3-3b",
+    "name": "Ministral 3 3B",
+    "model_id": "mistral.ministral-3-3b-instruct",
+    "input_usd_per_million": 0.10,
+    "output_usd_per_million": 0.10,
+    "price_source": "AWS Price List API"
+  }
+]
