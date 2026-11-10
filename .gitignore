@@ -18,3 +18,4 @@ iam/runtime-policy.rendered.json
 .mypy_cache/
 .ruff_cache/
 .pytype/
+samconfig.toml

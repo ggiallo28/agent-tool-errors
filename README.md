@@ -167,6 +167,8 @@ In this run the agent made 19 tool calls. 13 were rejected and 6 of 6 configurat
 
 The first call shows the loop. The name `Write latency of the media volume` broke `collection_configs_signal_name_check`, and the rejection said what a valid name looks like. The next call fixed the name and then hit `config_field_exists`, which returned the nine valid `source_field` values. Request R1 took six calls in all: each rejection named one rule, and the agent changed what it named until the row was saved.
 
+Planned: deployment on Aurora Serverless v2 with the RDS Data API. The spec is in `.kiro/specs/aws-deploy`; it is not implemented yet, so everything in this README runs locally.
+
 ## Evidence
 
 The gists below are generated from the run files in `runs/2026-11-10/` with the code of this repository at the commit each gist names.
