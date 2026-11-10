@@ -3,11 +3,13 @@
 Services and fields come from the source's OpenAPI schema, requests from the manual's
 "Requests from operations" table. The parsers take the text of a file and read no file:
 the Catalog_Loader in scripts/apply_schema.py reads MANUAL and OPENAPI and passes the text.
+`agent_input` is the one function of this module that reads a file (MANUAL).
 """
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from pathlib import Path
 
 import yaml
 
@@ -172,3 +174,14 @@ def parse_requests(manual_text: str) -> list[Request]:
     if not out:
         raise ManualError(f"section '{REQUESTS_HEADING}': no request rows found")
     return out
+
+
+def agent_input(root, installation_id: str = "install-07") -> str:
+    """The text the writer agent reads: the installation and the request texts, nothing else.
+
+    This is the one function of the module that reads a file: MANUAL under ``root``.
+    """
+    text = (Path(root) / MANUAL).read_text(encoding="utf-8")
+    lines = [f"Installation: {installation_id}", "Requests:"]
+    lines += [f"{r.request_id}: {r.request_text}" for r in parse_requests(text)]
+    return "\n".join(lines)
