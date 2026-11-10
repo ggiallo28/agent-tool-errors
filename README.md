@@ -166,3 +166,13 @@ run=single-instructive-1794320669 calls=19 follow_ups=1 escalated=None input_tok
 In this run the agent made 19 tool calls. 13 were rejected and 6 of 6 configurations were saved as drafts, one for each of the requests R1 to R6. The summary reports 1 follow-up, 48,132 input tokens and 2,330 output tokens.
 
 The first call shows the loop. The name `Write latency of the media volume` broke `collection_configs_signal_name_check`, and the rejection said what a valid name looks like. The next call fixed the name and then hit `config_field_exists`, which returned the nine valid `source_field` values. Request R1 took six calls in all: each rejection named one rule, and the agent changed what it named until the row was saved.
+
+## Evidence
+
+The gists below are generated from the run files in `runs/` with the code of this repository. Links are added after publishing.
+
+- Agent learns a schema from database rejections, the cheapest model that saved all six configurations: link added after publishing
+- Bedrock models, one database: every model of the run, the results table and the rows each one kept: link added after publishing
+- Models that did not save all six configurations, published only when the runs have one: link added after publishing
+
+To regenerate them from a directory of run files: `uv run scripts/summarize_runs.py runs/<date> --rows` prints the table and the rows, and `uv run scripts/make_gists.py runs/<date>` writes the gists into `gists/`.
