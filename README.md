@@ -10,7 +10,7 @@ What exists so far is the database layer: the schema, the connection code for Au
 - [uv](https://docs.astral.sh/uv/)
 - Docker
 
-AWS is needed only for Bedrock and for Aurora. Neither is used in the steps below.
+AWS is needed only for Bedrock and for Aurora. Neither is used in the steps below. When you do use Bedrock, model access must be enabled in us-east-1, the region this project uses.
 
 Install the dependencies once:
 
@@ -44,10 +44,10 @@ $ AWS_REGION= uv run scripts/apply_schema.py
 Configuration error, agent not started. Missing: AWS_REGION
 ```
 
-Set it (any region you use for Bedrock) and apply the schema. This creates the tables, the rules, the two roles and their passwords, and loads the catalog from `manuals/`:
+Set it to `us-east-1` and apply the schema. This creates the tables, the rules, the two roles and their passwords, and loads the catalog from `manuals/`:
 
 ```
-$ export AWS_REGION=eu-west-1
+$ export AWS_REGION=us-east-1
 $ uv run scripts/apply_schema.py
 installations: 1
 services: 5

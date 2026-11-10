@@ -10,6 +10,7 @@
 
 - Only through Amazon Bedrock (Converse API, via Strands `BedrockModel`).
 - Region from `AWS_REGION`.
+- Region: us-east-1. Code still reads it from AWS_REGION and never hardcodes it.
 - `temperature=0`.
 
 ## Database
