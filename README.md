@@ -97,3 +97,42 @@ uv run pytest -m docker_script   # tests of scripts/local_db.sh, run alone
 ```
 
 The `docker_script` tests remove and recreate the container `opsmem-pg`, which the `local_pg` tests use. Run them in a separate session and never together. If you select both, pytest stops before running any test. After a `docker_script` session, run `eval "$(scripts/local_db.sh up)"` and the applier again before the next `local_pg` session.
+
+## Part 1: the database says no
+
+### 3. Verify without spending
+
+Here I check what the agent will read when the database rejects a row, without calling a model. The script below connects as `agent_writer` to the local database from the previous step, inserts a configuration whose `source_field` does not exist, and prints the rejection twice: once in raw mode and once in instructive mode.
+
+```python
+from opsmem import db, errors
+
+agent = db.connect("agent_writer")
+proposal = {"request_id": "R1", "service_id": "api", "signal_type": "latency",
+            "source_field": "no_such_field", "sample_s": 60}
+try:
+    agent.run(
+        "INSERT INTO collection_configs (run_id, installation_id, request_id, service_id, signal_name,"
+        " signal_type, source_field, unit, sample_s, model_id)"
+        " VALUES ('demo', 'install-07', :request_id, :service_id, 'demo_signal', :signal_type,"
+        " :source_field, 'ms', :sample_s, 'demo')", **proposal)
+except agent.DatabaseError as err:
+    rule = errors.classify(str(err))
+    valid = errors.valid_values(agent, rule, proposal, "install-07")
+    print(errors.render(rule, [], "raw", str(err)))
+    print(errors.render(rule, valid, "instructive", str(err)))
+```
+
+I saved it as a file and ran it with `uv run python`, with `OPSMEM_LOCAL_PG` and `AWS_REGION` set as before. This is the output, unedited:
+
+```
+ERROR: insert or update on table "collection_configs" violates foreign key constraint "config_field_exists"
+DETAIL:  Key (installation_id, source_field)=(install-07, no_such_field) is not present in table "source_fields".
+REJECTED (config_field_exists). Not saved. Unknown source_field. Valid source_field: api_5xx, api_p95, cls_create_fail, enc_active, enc_q_wait, jq_depth, jq_oldest, mst_free_pct, mst_wr_lat.
+```
+
+The first two lines are the raw mode: the message PostgreSQL produced, passed through as it is. The third line is the instructive mode. `classify` reads the rule name from the message (`config_field_exists`). `valid_values` asks the database, as `agent_writer`, for the nine field names of `install-07`. `render` puts the rule, the parameter to change (`source_field`) and those values in one line.
+
+The instruction names the parameter to change and never a tool. I did this on purpose. A tool name in a rejection tells the model which action to repeat, and I want the experiment to measure what the model learns from the rule and the valid values alone. If the line said which tool to call, I could not tell whether the model understood the rule or only followed the hint.
+
+The lookup of valid values must run with the `agent_writer` connection, as in the script. With a role that cannot read the catalog, the list comes back empty.

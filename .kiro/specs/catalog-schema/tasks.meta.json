@@ -1,6 +1,13 @@
 {
   "pbtResults": {},
   "executionHistory": {
+    "1. Set up project, dependencies and marker guard": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311150385
+      }
+    ],
     "1.1 Create `pyproject.toml` and the package skeleton": [
       {
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
@@ -50,6 +57,13 @@
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
         "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
         "timestamp": 1794311150318
+      }
+    ],
+    "2. Implement manual parsers with tests": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311189442
       }
     ],
     "2.1 Implement `opsmem/manual.py`: types, constants, `parse_services`, `parse_fields`": [
@@ -119,6 +133,13 @@
         "timestamp": 1794311011031
       }
     ],
+    "3. Implement db core logic with tests": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011278
+      }
+    ],
     "3.1 Implement the pure parts of `opsmem/db.py`": [
       {
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
@@ -152,6 +173,13 @@
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
         "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
         "timestamp": 1794311011238
+      }
+    ],
+    "4. Implement Aurora backend with tests": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011457
       }
     ],
     "4.1 Implement `AuroraBackend` in `opsmem/db.py`": [
@@ -189,6 +217,13 @@
         "timestamp": 1794311011417
       }
     ],
+    "5. Implement local backend and `connect` with tests": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011601
+      }
+    ],
     "5.1 Implement `LocalBackend` and `connect(role)` in `opsmem/db.py`": [
       {
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
@@ -217,6 +252,13 @@
         "timestamp": 1794311011561
       }
     ],
+    "6. Write schema SQL for tables": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011721
+      }
+    ],
     "6.1 Create `sql/schema.sql` with roles and catalog tables": [
       {
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
@@ -238,6 +280,13 @@
         "timestamp": 1794311011681
       }
     ],
+    "7. Write schema SQL for triggers, roles and grants": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011819
+      }
+    ],
     "7.1 Add functions and triggers to `sql/schema.sql`": [
       {
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
@@ -257,6 +306,13 @@
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
         "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
         "timestamp": 1794311011779
+      }
+    ],
+    "8. Implement schema applier and catalog loader with tests": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012137
       }
     ],
     "8.1 Implement `split_statements` in `scripts/apply_schema.py`": [
@@ -308,6 +364,13 @@
         "timestamp": 1794311012097
       }
     ],
+    "9. Implement local database script with offline tests": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012254
+      }
+    ],
     "9.1 Create `scripts/local_db.sh`": [
       {
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
@@ -322,11 +385,25 @@
         "timestamp": 1794311012214
       }
     ],
+    "10. Add Docker script tests": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012290
+      }
+    ],
     "10.1 Write `tests/test_local_db_sh.py` with the marker `docker_script`": [
       {
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
         "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
         "timestamp": 1794311012250
+      }
+    ],
+    "11. Add local database fixtures, smoke tests and error text test": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012420
       }
     ],
     "11.1 Create `tests/conftest.py` fixtures for `local_pg`": [
@@ -355,6 +432,13 @@
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
         "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
         "timestamp": 1794311012380
+      }
+    ],
+    "12. Add database rule tests for tables and constraints": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012605
       }
     ],
     "12.1 Write rule tests in `tests/test_rules_pg.py` (marker `local_pg`): catalog, defaults and status": [
@@ -392,6 +476,13 @@
         "timestamp": 1794311012565
       }
     ],
+    "13. Add database rule tests for triggers, precedence and grants": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012805
+      }
+    ],
     "13.1 Add `test_precedence_matrix` to `tests/test_rules_pg.py`": [
       {
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
@@ -427,11 +518,25 @@
         "timestamp": 1794311012765
       }
     ],
+    "14. Add Aurora smoke test": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012837
+      }
+    ],
     "14.1 Write `tests/test_aurora_smoke.py` (marker `aurora`)": [
       {
         "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
         "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
         "timestamp": 1794311012797
+      }
+    ],
+    "15. Write README.md, first version": [
+      {
+        "executionId": "a0ce9c94-c5e9-49da-9098-ae1aaecc5cc9",
+        "chatSessionId": "sess_a6e56c74-d49b-487d-a8c5-03d5f726e385",
+        "timestamp": 1794312888935
       }
     ],
     "15.1 Create `README.md` with the title, summary and prerequisites": [
@@ -482,20 +587,6 @@
         "executionId": "a0ce9c94-c5e9-49da-9098-ae1aaecc5cc9",
         "chatSessionId": "sess_a6e56c74-d49b-487d-a8c5-03d5f726e385",
         "timestamp": 1794312892220
-      }
-    ],
-    "1. Set up project, dependencies and marker guard": [
-      {
-        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
-        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
-        "timestamp": 1794311150385
-      }
-    ],
-    "15. Write README.md, first version": [
-      {
-        "executionId": "a0ce9c94-c5e9-49da-9098-ae1aaecc5cc9",
-        "chatSessionId": "sess_a6e56c74-d49b-487d-a8c5-03d5f726e385",
-        "timestamp": 1794312888935
       }
     ]
   }
