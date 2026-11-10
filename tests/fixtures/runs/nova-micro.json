@@ -1,0 +1,133 @@
+{
+  "model_id": "us.amazon.nova-micro-v1:0",
+  "label": "nova-micro",
+  "mode": "instructive",
+  "commit": "0123456789abcdef0123456789abcdef01234567",
+  "started_at": "2026-01-01T00:00:00Z",
+  "run_id": "eval-nova-micro-1767225600",
+  "tool_calls": 8,
+  "rejections": {
+    "R1:config_service_matches_request": 1,
+    "R3:config_service_matches_request": 1
+  },
+  "follow_ups": 0,
+  "escalated": null,
+  "flagged": [],
+  "trace": [
+    {
+      "ts": "2026-01-01T00:00:00.000+00:00",
+      "call": {
+        "request_id": "R1",
+        "service_id": "install-07",
+        "signal_name": "sig_r1",
+        "signal_type": "latency",
+        "source_field": "mst_wr_lat",
+        "unit": "ms",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_service_matches_request). Not saved. Wrong service_id for this request. Valid service_id: media.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_service_matches_request\""
+    },
+    {
+      "ts": "2026-01-01T00:00:01.000+00:00",
+      "call": {
+        "request_id": "R1",
+        "service_id": "media",
+        "signal_name": "sig_r1",
+        "signal_type": "latency",
+        "source_field": "mst_wr_lat",
+        "unit": "ms",
+        "sample_seconds": "10"
+      },
+      "result": "Saved as draft: sig_r1 <- mst_wr_lat (ms, every 10 s). A person will review it.",
+      "db_message": null
+    },
+    {
+      "ts": "2026-01-01T00:00:02.000+00:00",
+      "call": {
+        "request_id": "R2",
+        "service_id": "encoding",
+        "signal_name": "sig_r2",
+        "signal_type": "latency",
+        "source_field": "enc_q_wait",
+        "unit": "s",
+        "sample_seconds": "10"
+      },
+      "result": "Saved as draft: sig_r2 <- enc_q_wait (s, every 10 s). A person will review it.",
+      "db_message": null
+    },
+    {
+      "ts": "2026-01-01T00:00:03.000+00:00",
+      "call": {
+        "request_id": "R3",
+        "service_id": "install-07",
+        "signal_name": "sig_r3",
+        "signal_type": "latency",
+        "source_field": "api_p95",
+        "unit": "s",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_service_matches_request). Not saved. Wrong service_id for this request. Valid service_id: api.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_service_matches_request\""
+    },
+    {
+      "ts": "2026-01-01T00:00:04.000+00:00",
+      "call": {
+        "request_id": "R3",
+        "service_id": "api",
+        "signal_name": "sig_r3",
+        "signal_type": "latency",
+        "source_field": "api_p95",
+        "unit": "s",
+        "sample_seconds": "10"
+      },
+      "result": "Saved as draft: sig_r3 <- api_p95 (s, every 10 s). A person will review it.",
+      "db_message": null
+    },
+    {
+      "ts": "2026-01-01T00:00:05.000+00:00",
+      "call": {
+        "request_id": "R4",
+        "service_id": "api",
+        "signal_name": "sig_r4",
+        "signal_type": "count",
+        "source_field": "api_5xx",
+        "unit": "count",
+        "sample_seconds": "10"
+      },
+      "result": "Saved as draft: sig_r4 <- api_5xx (count, every 10 s). A person will review it.",
+      "db_message": null
+    },
+    {
+      "ts": "2026-01-01T00:00:06.000+00:00",
+      "call": {
+        "request_id": "R5",
+        "service_id": "classes",
+        "signal_name": "sig_r5",
+        "signal_type": "count",
+        "source_field": "cls_create_fail",
+        "unit": "count",
+        "sample_seconds": "60"
+      },
+      "result": "Saved as draft: sig_r5 <- cls_create_fail (count, every 60 s). A person will review it.",
+      "db_message": null
+    },
+    {
+      "ts": "2026-01-01T00:00:07.000+00:00",
+      "call": {
+        "request_id": "R6",
+        "service_id": "queue",
+        "signal_name": "sig_r6",
+        "signal_type": "count",
+        "source_field": "jq_depth",
+        "unit": "count",
+        "sample_seconds": "10"
+      },
+      "result": "Saved as draft: sig_r6 <- jq_depth (count, every 10 s). A person will review it.",
+      "db_message": null
+    }
+  ],
+  "input_tokens": 51844,
+  "output_tokens": 2454,
+  "final_text": "All six requests are saved."
+}
