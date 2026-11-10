@@ -64,6 +64,12 @@ Error: the database is not empty, the schema already exists. Nothing was applied
 
 `scripts/local_db.sh down` removes the container.
 
+To run the writer agent once on `install-07`, this is the only step that calls Bedrock and pays for the model. The `--model` argument is required. `--mode` is `instructive` by default and can be `raw`:
+
+```
+uv run scripts/run_writer.py --model us.amazon.nova-micro-v1:0
+```
+
 ## What the database enforces
 
 All rules are in `sql/schema.sql`. Each one has a fixed name, and that name is what a rejection reports.
@@ -136,3 +142,27 @@ The first two lines are the raw mode: the message PostgreSQL produced, passed th
 The instruction names the parameter to change and never a tool. I did this on purpose. A tool name in a rejection tells the model which action to repeat, and I want the experiment to measure what the model learns from the rule and the valid values alone. If the line said which tool to call, I could not tell whether the model understood the rule or only followed the hint.
 
 The lookup of valid values must run with the `agent_writer` connection, as in the script. With a role that cannot read the catalog, the list comes back empty.
+
+### 4. One writer run
+
+Here I let the agent write the six configurations of `install-07`, with the instructive rejections from step 3. This is the first step that calls a model. I ran it on a fresh local database with `us.amazon.nova-micro-v1:0` in us-east-1:
+
+```bash
+eval "$(scripts/local_db.sh up)"
+export AWS_REGION=us-east-1
+uv run scripts/apply_schema.py
+uv run scripts/run_writer.py --model us.amazon.nova-micro-v1:0
+```
+
+The script prints one JSON line per tool call, then one summary line. It also saves the whole result in `results/<run>.json`. These are the first three lines of the trace and the summary line, unedited. The trace has 19 lines in total:
+
+```text
+{"ts": "2026-11-10T14:24:31.458+00:00", "call": {"request_id": "R1", "service_id": "install-07", "signal_name": "Write latency of the media volume", "signal_type": "latency", "source_field": "media_volume", "unit": "ms", "sample_seconds": "1"}, "result": "REJECTED (signal_name_check). Not saved. signal_name must be lowercase letters, digits and underscores, 3 to 41 characters.", "db_message": "new row for relation \"collection_configs\" violates check constraint \"collection_configs_signal_name_check\"\nDETAIL:  Failing row contains (1, single-instructive-1794320669, install-07, R1, install-07, Write latency of the media volume, latency, media_volume, ms, 1, us.amazon.nova-micro-v1:0, draft, agent_writer, null, f)."}
+{"ts": "2026-11-10T14:24:32.410+00:00", "call": {"request_id": "R1", "service_id": "install-07", "signal_name": "write_latency_media_volume", "signal_type": "latency", "source_field": "media_volume", "unit": "ms", "sample_seconds": "1"}, "result": "REJECTED (config_field_exists). Not saved. Unknown source_field. Valid source_field: api_5xx, api_p95, cls_create_fail, enc_active, enc_q_wait, jq_depth, jq_oldest, mst_free_pct, mst_wr_lat.", "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_field_exists\"\nDETAIL:  Key (installation_id, source_field)=(install-07, media_volume) is not present in table \"source_fields\"."}
+{"ts": "2026-11-10T14:24:33.297+00:00", "call": {"request_id": "R1", "service_id": "install-07", "signal_name": "write_latency_media_volume", "signal_type": "latency", "source_field": "mst_wr_lat", "unit": "ms", "sample_seconds": "1"}, "result": "REJECTED (config_sampling_supported). Not saved. sample_seconds not supported by this source_field. Valid range: 10 to 300 seconds.", "db_message": "config_sampling_supported: sample_s 1 outside 10 to 300 for mst_wr_lat\nCONTEXT:  PL/pgSQL function check_sampling() line 16 at RAISE"}
+run=single-instructive-1794320669 calls=19 follow_ups=1 escalated=None input_tokens=48132 output_tokens=2330
+```
+
+In this run the agent made 19 tool calls. 13 were rejected and 6 of 6 configurations were saved as drafts, one for each of the requests R1 to R6. The summary reports 1 follow-up, 48,132 input tokens and 2,330 output tokens.
+
+The first call shows the loop. The name `Write latency of the media volume` broke `collection_configs_signal_name_check`, and the rejection said what a valid name looks like. The next call fixed the name and then hit `config_field_exists`, which returned the nine valid `source_field` values. Request R1 took six calls in all: each rejection named one rule, and the agent changed what it named until the row was saved.
