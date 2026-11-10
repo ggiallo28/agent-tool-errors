@@ -1,0 +1,502 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create `pyproject.toml` and the package skeleton": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311009853
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311019715
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311069620
+      }
+    ],
+    "1.2 Create root `conftest.py` with the marker guard": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311010216
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311072857
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311101447
+      }
+    ],
+    "1.3 Write tests for the marker guard in `tests/test_markers.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311010447
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311106034
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311150318
+      }
+    ],
+    "2.1 Implement `opsmem/manual.py`: types, constants, `parse_services`, `parse_fields`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311010776
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311106716
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311150769
+      }
+    ],
+    "2.2 Implement `parse_requests` in `opsmem/manual.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311010894
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311155072
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311183032
+      }
+    ],
+    "2.3 Write example tests in `tests/test_manual.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311010931
+      },
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311189402
+      }
+    ],
+    "2.4 Write property test for OpenAPI parse round trip in `tests/test_manual.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311010964
+      }
+    ],
+    "2.5 Write property test for dangling references in `tests/test_manual.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311010997
+      }
+    ],
+    "2.6 Write property test for requests table round trip in `tests/test_manual.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011031
+      }
+    ],
+    "3.1 Implement the pure parts of `opsmem/db.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011078
+      }
+    ],
+    "3.2 Write property test for local parameter conversion in `tests/test_db_params.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011115
+      }
+    ],
+    "3.3 Write property test for `OPSMEM_LOCAL_PG` parsing in `tests/test_db_params.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011146
+      }
+    ],
+    "3.4 Write property test for the configuration check in `tests/test_check_config.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011185
+      }
+    ],
+    "3.5 Write property test for local mode required list in `tests/test_check_config.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011238
+      }
+    ],
+    "4.1 Implement `AuroraBackend` in `opsmem/db.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011271
+      }
+    ],
+    "4.2 Write property test for Data API value round trip in `tests/test_db_aurora.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011303
+      }
+    ],
+    "4.3 Write property test for the retry schedule in `tests/test_db_aurora.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011347
+      }
+    ],
+    "4.4 Write property test for missing parameters on Aurora in `tests/test_db_aurora.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011380
+      }
+    ],
+    "4.5 Write example tests in `tests/test_db_aurora.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011417
+      }
+    ],
+    "5.1 Implement `LocalBackend` and `connect(role)` in `opsmem/db.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011447
+      }
+    ],
+    "5.2 Write property test for backend selection in `tests/test_db_connect.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011480
+      }
+    ],
+    "5.3 Write property test for invalid roles in `tests/test_db_connect.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011514
+      }
+    ],
+    "5.4 Write local backend unit tests in `tests/test_db_local.py` with a fake psycopg": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011561
+      }
+    ],
+    "6.1 Create `sql/schema.sql` with roles and catalog tables": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011615
+      }
+    ],
+    "6.2 Add `collection_configs`, `review_log` and `signals` to `sql/schema.sql`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011648
+      }
+    ],
+    "6.3 Write offline schema text tests in `tests/test_schema_text.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011681
+      }
+    ],
+    "7.1 Add functions and triggers to `sql/schema.sql`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011713
+      }
+    ],
+    "7.2 Add grants to `sql/schema.sql`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011748
+      }
+    ],
+    "7.3 Extend `tests/test_schema_text.py` with trigger and grant checks": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011779
+      }
+    ],
+    "8.1 Implement `split_statements` in `scripts/apply_schema.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011818
+      }
+    ],
+    "8.2 Implement the apply flow in `scripts/apply_schema.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011925
+      }
+    ],
+    "8.3 Implement the Catalog_Loader in `scripts/apply_schema.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011951
+      }
+    ],
+    "8.4 Write property test for statement splitting in `tests/test_apply_schema.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311011979
+      }
+    ],
+    "8.5 Write property test for order and stop at first failure in `tests/test_apply_schema.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012016
+      }
+    ],
+    "8.6 Write property test for the existing schema refusal in `tests/test_apply_schema.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012059
+      }
+    ],
+    "8.7 Write loader unit tests in `tests/test_catalog_loader.py` with a spy database": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012097
+      }
+    ],
+    "9.1 Create `scripts/local_db.sh`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012149
+      }
+    ],
+    "9.2 Write offline tests in `tests/test_local_db_offline.py` with a stub `docker` on PATH": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012214
+      }
+    ],
+    "10.1 Write `tests/test_local_db_sh.py` with the marker `docker_script`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012250
+      }
+    ],
+    "11.1 Create `tests/conftest.py` fixtures for `local_pg`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012281
+      }
+    ],
+    "11.2 Write `tests/test_schema_pg.py` (marker `local_pg`)": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012314
+      }
+    ],
+    "11.3 Extend `tests/test_apply_schema.py` with `local_pg` tests": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012348
+      }
+    ],
+    "11.4 Write `tests/test_db_error_pg.py` (marker `local_pg`)": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012380
+      }
+    ],
+    "12.1 Write rule tests in `tests/test_rules_pg.py` (marker `local_pg`): catalog, defaults and status": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012417
+      }
+    ],
+    "12.2 Add `test_review_log` and `test_signals_primary_key` to `tests/test_rules_pg.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012450
+      }
+    ],
+    "12.3 Add the eight `test_config_foreign_key_<name>` tests to `tests/test_rules_pg.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012483
+      }
+    ],
+    "12.4 Add `test_config_unique_<name>` (3 tests) and `test_approval_signed` to `tests/test_rules_pg.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012526
+      }
+    ],
+    "12.5 Add `test_signal_name_pattern` to `tests/test_rules_pg.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012565
+      }
+    ],
+    "13.1 Add `test_precedence_matrix` to `tests/test_rules_pg.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012597
+      }
+    ],
+    "13.2 Add sampling tests to `tests/test_rules_pg.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012632
+      }
+    ],
+    "13.3 Add `test_transitions` to `tests/test_rules_pg.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012678
+      }
+    ],
+    "13.4 Add `test_signal_admission` to `tests/test_rules_pg.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012716
+      }
+    ],
+    "13.5 Add `test_role_grants` and `test_forbidden_statements` to `tests/test_rules_pg.py`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012765
+      }
+    ],
+    "14.1 Write `tests/test_aurora_smoke.py` (marker `aurora`)": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012797
+      }
+    ],
+    "15.1 Create `README.md` with the title, summary and prerequisites": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012830
+      }
+    ],
+    "15.2 Add the section `## Run it locally, paying only for the model`": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012865
+      }
+    ],
+    "15.3 Add a short section on what the database enforces": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311012968
+      }
+    ],
+    "15.4 Verify the README against the repository": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311013013
+      },
+      {
+        "executionId": "a0ce9c94-c5e9-49da-9098-ae1aaecc5cc9",
+        "chatSessionId": "sess_a6e56c74-d49b-487d-a8c5-03d5f726e385",
+        "timestamp": 1794312332916
+      },
+      {
+        "executionId": "a0ce9c94-c5e9-49da-9098-ae1aaecc5cc9",
+        "chatSessionId": "sess_a6e56c74-d49b-487d-a8c5-03d5f726e385",
+        "timestamp": 1794312888885
+      }
+    ],
+    "16. Final checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311013050
+      },
+      {
+        "executionId": "a0ce9c94-c5e9-49da-9098-ae1aaecc5cc9",
+        "chatSessionId": "sess_a6e56c74-d49b-487d-a8c5-03d5f726e385",
+        "timestamp": 1794312892220
+      }
+    ],
+    "1. Set up project, dependencies and marker guard": [
+      {
+        "executionId": "aca934a3-335e-4fb1-9138-ef0c890ea51f",
+        "chatSessionId": "sess_87b168a9-68e7-46fa-812e-df9cd317870a",
+        "timestamp": 1794311150385
+      }
+    ],
+    "15. Write README.md, first version": [
+      {
+        "executionId": "a0ce9c94-c5e9-49da-9098-ae1aaecc5cc9",
+        "chatSessionId": "sess_a6e56c74-d49b-487d-a8c5-03d5f726e385",
+        "timestamp": 1794312888935
+      }
+    ]
+  }
+}

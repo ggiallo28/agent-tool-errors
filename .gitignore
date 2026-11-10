@@ -11,3 +11,10 @@ agentcore/.cli/*
 agentcore/.cache/
 agentcore/cdk/cdk.out/
 iam/runtime-policy.rendered.json
+.pytest_cache/
+.serena/
+.hypothesis/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytype/

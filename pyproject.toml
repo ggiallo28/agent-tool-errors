@@ -1,0 +1,29 @@
+[project]
+name = "agent-tool-errors"
+version = "0.1.0"
+description = "Agents that write configuration rows; the rules live in PostgreSQL and every rejection tells the agent what to change"
+requires-python = ">=3.12"
+dependencies = [
+    "boto3==1.43.127",
+    "pyyaml==6.0.3",
+]
+
+[dependency-groups]
+dev = ["pytest==9.2.0", "hypothesis==6.140.0"]
+local = ["psycopg[binary]==3.3.8"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+markers = [
+  "local_pg: uses the shared container opsmem-pg (needs OPSMEM_LOCAL_PG)",
+  "docker_script: starts and stops opsmem-pg; run only with -m docker_script, never together with local_pg",
+  "aurora: needs a deployed Aurora cluster (CLUSTER_ARN)",
+]
+addopts = "--strict-markers"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["opsmem"]
