@@ -28,6 +28,7 @@ CREATE TABLE source_fields (
     PRIMARY KEY (installation_id, field_name),
     UNIQUE (installation_id, field_name, unit),
     UNIQUE (installation_id, service_id, field_name),
+    FOREIGN KEY (installation_id) REFERENCES installations (installation_id),
     FOREIGN KEY (installation_id, service_id) REFERENCES services (installation_id, service_id)
 )
 -- @@ --
