@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This spec covers the module `opsmem/errors.py`, which turns a database rejection of a configuration row into the text the model reads. It offers two modes. In raw mode the model sees the database message untouched. In instructive mode the model sees the name of the violated rule, a statement that nothing was saved, and a one-line instruction that names the parameter to change and lists up to 10 valid values read from the database. The module also holds the README step that shows both modes with real output. Strings in this document are an external contract. Other tools compare them byte for byte, so they must be kept exactly.
+This spec covers the module `opsmem/errors.py`, which turns a database rejection of a configuration row into the text the model reads. It offers two modes. In raw mode the model sees the database message untouched. In instructive mode the model sees the name of the violated rule, a statement that nothing was saved, and a one-line instruction that names the parameter to change and lists up to 10 valid values read from the database. The module also holds the README step that shows both modes with real output. Strings in this document are an external contract. The model reads these strings, so changing one changes what the agent learns: keep them exactly.
 
 Out of scope: the agent, the escalation after repeated rejections and the experiment.
 

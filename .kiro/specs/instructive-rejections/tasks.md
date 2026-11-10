@@ -123,7 +123,7 @@ The implementation language is Python 3.12, as in the rest of the repository. Al
 - No commits and no pushes while the spec is being written.
 - On approval of the tasks: one commit with the three documents, message `docs(instructive-rejections): requirements, design and tasks`, then push.
 - After each task, when its tests pass: commit the code and tests of that task only, as `feat(instructive-rejections): <task number> <task title in lowercase>`. Use `test(instructive-rejections): <task number> <task title in lowercase>` if the task only adds tests. Then push, then stop and wait for the user before the next task.
-- When the conformance check finds differences: one commit `fix(instructive-rejections): <what now matches>` for the code, then a separate commit `docs(instructive-rejections): <the rule, in a few words>` for `requirements.md` and `design.md`. Push after each commit.
+- When I report a difference between expected and actual output: one commit `fix(instructive-rejections): <what now matches>` for the code, then a separate commit `docs(instructive-rejections): <the rule, in a few words>` for `requirements.md` and `design.md`. Push after each commit.
 
 ## Task Dependency Graph
 

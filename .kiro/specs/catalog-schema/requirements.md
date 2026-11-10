@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This spec covers the PostgreSQL database that holds the rules for collection configurations, the connections per role, and the loading of the catalog from the manual. PostgreSQL enforces every rule with named constraints, foreign keys, triggers, column-level grants and roles. Names, messages and orders in this document are an external contract. Other tools compare them byte for byte, so they must be kept exactly.
+This spec covers the PostgreSQL database that holds the rules for collection configurations, the connections per role, and the loading of the catalog from the manual. PostgreSQL enforces every rule with named constraints, foreign keys, triggers, column-level grants and roles. Names, messages and orders in this document are an external contract. The model reads these strings, so changing one changes what the agent learns: keep them exactly.
 
 Out of scope: the tool layer, the agent, the experiment scripts and AWS deployment.
 
