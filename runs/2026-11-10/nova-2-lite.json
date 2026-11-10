@@ -1,0 +1,313 @@
+{
+  "model_id": "us.amazon.nova-2-lite-v1:0",
+  "label": "nova-2-lite",
+  "mode": "instructive",
+  "commit": "cae0db72efa810c3d18597501cf258898e7b5a51",
+  "started_at": "2026-11-10T15:42:23Z",
+  "run_id": "eval-nova-2-lite-1794325343",
+  "tool_calls": 20,
+  "rejections": {
+    "R1:signal_name_check": 1,
+    "R1:config_field_exists": 1,
+    "R1:config_sampling_supported": 1,
+    "R1:config_unit_matches_source": 1,
+    "R1:config_service_matches_request": 1,
+    "R2:config_unit_matches_source": 1,
+    "R2:config_service_matches_request": 1,
+    "R3:config_unit_matches_source": 1,
+    "R3:config_service_matches_request": 1,
+    "R4:config_service_matches_request": 1,
+    "R5:config_sampling_supported": 1,
+    "R5:config_service_matches_request": 1,
+    "R5:config_sampling_requested": 1,
+    "R6:config_service_matches_request": 1
+  },
+  "follow_ups": 0,
+  "escalated": null,
+  "flagged": [],
+  "trace": [
+    {
+      "ts": "2026-11-10T15:42:25.352+00:00",
+      "call": {
+        "request_id": "R1",
+        "service_id": "install-07",
+        "signal_name": "R1: Write latency of the media volume",
+        "signal_type": "latency",
+        "source_field": "media_volume_latency",
+        "unit": "milliseconds",
+        "sample_seconds": "5"
+      },
+      "result": "REJECTED (signal_name_check). Not saved. signal_name must be lowercase letters, digits and underscores, 3 to 41 characters.",
+      "db_message": "new row for relation \"collection_configs\" violates check constraint \"collection_configs_signal_name_check\"\nDETAIL:  Failing row contains (69, eval-nova-2-lite-1794325343, install-07, R1, install-07, R1: Write latency of the media volume, latency, media_volume_latency, milliseconds, 5, us.amazon.nova-2-lite-v1:0, draft, agent_writer, null, f)."
+    },
+    {
+      "ts": "2026-11-10T15:42:26.570+00:00",
+      "call": {
+        "request_id": "R1",
+        "service_id": "install-07",
+        "signal_name": "r1_write_latency_media_volume",
+        "signal_type": "latency",
+        "source_field": "media_volume_latency",
+        "unit": "milliseconds",
+        "sample_seconds": "5"
+      },
+      "result": "REJECTED (config_field_exists). Not saved. Unknown source_field. Valid source_field: api_5xx, api_p95, cls_create_fail, enc_active, enc_q_wait, jq_depth, jq_oldest, mst_free_pct, mst_wr_lat.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_field_exists\"\nDETAIL:  Key (installation_id, source_field)=(install-07, media_volume_latency) is not present in table \"source_fields\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:27.509+00:00",
+      "call": {
+        "request_id": "R1",
+        "service_id": "install-07",
+        "signal_name": "r1_write_latency_media_volume",
+        "signal_type": "latency",
+        "source_field": "mst_wr_lat",
+        "unit": "milliseconds",
+        "sample_seconds": "5"
+      },
+      "result": "REJECTED (config_sampling_supported). Not saved. sample_seconds not supported by this source_field. Valid range: 10 to 300 seconds.",
+      "db_message": "config_sampling_supported: sample_s 5 outside 10 to 300 for mst_wr_lat\nCONTEXT:  PL/pgSQL function check_sampling() line 16 at RAISE"
+    },
+    {
+      "ts": "2026-11-10T15:42:28.530+00:00",
+      "call": {
+        "request_id": "R1",
+        "service_id": "install-07",
+        "signal_name": "r1_write_latency_media_volume",
+        "signal_type": "latency",
+        "source_field": "mst_wr_lat",
+        "unit": "milliseconds",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_unit_matches_source). Not saved. Wrong unit for this source_field. Valid unit: ms.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_unit_matches_source\"\nDETAIL:  Key (installation_id, source_field, unit)=(install-07, mst_wr_lat, milliseconds) is not present in table \"source_fields\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:29.439+00:00",
+      "call": {
+        "request_id": "R1",
+        "service_id": "install-07",
+        "signal_name": "r1_write_latency_media_volume",
+        "signal_type": "latency",
+        "source_field": "mst_wr_lat",
+        "unit": "ms",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_service_matches_request). Not saved. Wrong service_id for this request. Valid service_id: media.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_service_matches_request\"\nDETAIL:  Key (installation_id, request_id, service_id)=(install-07, R1, install-07) is not present in table \"signal_requests\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:30.356+00:00",
+      "call": {
+        "request_id": "R1",
+        "service_id": "media",
+        "signal_name": "r1_write_latency_media_volume",
+        "signal_type": "latency",
+        "source_field": "mst_wr_lat",
+        "unit": "ms",
+        "sample_seconds": "10"
+      },
+      "result": "Saved as draft: r1_write_latency_media_volume <- mst_wr_lat (ms, every 10 s). A person will review it.",
+      "db_message": null
+    },
+    {
+      "ts": "2026-11-10T15:42:31.324+00:00",
+      "call": {
+        "request_id": "R2",
+        "service_id": "install-07",
+        "signal_name": "r2_files_wait_before_encoding",
+        "signal_type": "latency",
+        "source_field": "enc_q_wait",
+        "unit": "seconds",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_unit_matches_source). Not saved. Wrong unit for this source_field. Valid unit: s.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_unit_matches_source\"\nDETAIL:  Key (installation_id, source_field, unit)=(install-07, enc_q_wait, seconds) is not present in table \"source_fields\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:32.283+00:00",
+      "call": {
+        "request_id": "R2",
+        "service_id": "install-07",
+        "signal_name": "r2_files_wait_before_encoding",
+        "signal_type": "latency",
+        "source_field": "enc_q_wait",
+        "unit": "s",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_service_matches_request). Not saved. Wrong service_id for this request. Valid service_id: encoding.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_service_matches_request\"\nDETAIL:  Key (installation_id, request_id, service_id)=(install-07, R2, install-07) is not present in table \"signal_requests\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:33.403+00:00",
+      "call": {
+        "request_id": "R2",
+        "service_id": "encoding",
+        "signal_name": "r2_files_wait_before_encoding",
+        "signal_type": "latency",
+        "source_field": "enc_q_wait",
+        "unit": "s",
+        "sample_seconds": "10"
+      },
+      "result": "Saved as draft: r2_files_wait_before_encoding <- enc_q_wait (s, every 10 s). A person will review it.",
+      "db_message": null
+    },
+    {
+      "ts": "2026-11-10T15:42:34.271+00:00",
+      "call": {
+        "request_id": "R3",
+        "service_id": "install-07",
+        "signal_name": "r3_api_response_time",
+        "signal_type": "latency",
+        "source_field": "api_p95",
+        "unit": "milliseconds",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_unit_matches_source). Not saved. Wrong unit for this source_field. Valid unit: s.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_unit_matches_source\"\nDETAIL:  Key (installation_id, source_field, unit)=(install-07, api_p95, milliseconds) is not present in table \"source_fields\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:35.356+00:00",
+      "call": {
+        "request_id": "R3",
+        "service_id": "install-07",
+        "signal_name": "r3_api_response_time",
+        "signal_type": "latency",
+        "source_field": "api_p95",
+        "unit": "s",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_service_matches_request). Not saved. Wrong service_id for this request. Valid service_id: api.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_service_matches_request\"\nDETAIL:  Key (installation_id, request_id, service_id)=(install-07, R3, install-07) is not present in table \"signal_requests\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:36.372+00:00",
+      "call": {
+        "request_id": "R3",
+        "service_id": "api",
+        "signal_name": "r3_api_response_time",
+        "signal_type": "latency",
+        "source_field": "api_p95",
+        "unit": "s",
+        "sample_seconds": "10"
+      },
+      "result": "Saved as draft: r3_api_response_time <- api_p95 (s, every 10 s). A person will review it.",
+      "db_message": null
+    },
+    {
+      "ts": "2026-11-10T15:42:37.702+00:00",
+      "call": {
+        "request_id": "R4",
+        "service_id": "install-07",
+        "signal_name": "r4_api_errors",
+        "signal_type": "count",
+        "source_field": "api_5xx",
+        "unit": "count",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_service_matches_request). Not saved. Wrong service_id for this request. Valid service_id: api.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_service_matches_request\"\nDETAIL:  Key (installation_id, request_id, service_id)=(install-07, R4, install-07) is not present in table \"signal_requests\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:38.739+00:00",
+      "call": {
+        "request_id": "R4",
+        "service_id": "api",
+        "signal_name": "r4_api_errors",
+        "signal_type": "count",
+        "source_field": "api_5xx",
+        "unit": "count",
+        "sample_seconds": "10"
+      },
+      "result": "Saved as draft: r4_api_errors <- api_5xx (count, every 10 s). A person will review it.",
+      "db_message": null
+    },
+    {
+      "ts": "2026-11-10T15:42:39.709+00:00",
+      "call": {
+        "request_id": "R5",
+        "service_id": "install-07",
+        "signal_name": "r5_failed_class_creations",
+        "signal_type": "count",
+        "source_field": "cls_create_fail",
+        "unit": "count",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_sampling_supported). Not saved. sample_seconds not supported by this source_field. Valid range: 30 to 600 seconds.",
+      "db_message": "config_sampling_supported: sample_s 10 outside 30 to 600 for cls_create_fail\nCONTEXT:  PL/pgSQL function check_sampling() line 16 at RAISE"
+    },
+    {
+      "ts": "2026-11-10T15:42:40.919+00:00",
+      "call": {
+        "request_id": "R5",
+        "service_id": "install-07",
+        "signal_name": "r5_failed_class_creations",
+        "signal_type": "count",
+        "source_field": "cls_create_fail",
+        "unit": "count",
+        "sample_seconds": "30"
+      },
+      "result": "REJECTED (config_service_matches_request). Not saved. Wrong service_id for this request. Valid service_id: classes.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_service_matches_request\"\nDETAIL:  Key (installation_id, request_id, service_id)=(install-07, R5, install-07) is not present in table \"signal_requests\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:42.252+00:00",
+      "call": {
+        "request_id": "R5",
+        "service_id": "classes",
+        "signal_name": "r5_failed_class_creations",
+        "signal_type": "count",
+        "source_field": "cls_create_fail",
+        "unit": "count",
+        "sample_seconds": "30"
+      },
+      "result": "REJECTED (config_sampling_requested). Not saved. Wrong sample_seconds for this request. Valid sample_seconds: 60.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_sampling_requested\"\nDETAIL:  Key (installation_id, request_id, sample_s)=(install-07, R5, 30) is not present in table \"signal_requests\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:43.389+00:00",
+      "call": {
+        "request_id": "R5",
+        "service_id": "classes",
+        "signal_name": "r5_failed_class_creations",
+        "signal_type": "count",
+        "source_field": "cls_create_fail",
+        "unit": "count",
+        "sample_seconds": "60"
+      },
+      "result": "Saved as draft: r5_failed_class_creations <- cls_create_fail (count, every 60 s). A person will review it.",
+      "db_message": null
+    },
+    {
+      "ts": "2026-11-10T15:42:44.823+00:00",
+      "call": {
+        "request_id": "R6",
+        "service_id": "install-07",
+        "signal_name": "r6_depth_of_job_queue",
+        "signal_type": "count",
+        "source_field": "jq_depth",
+        "unit": "count",
+        "sample_seconds": "10"
+      },
+      "result": "REJECTED (config_service_matches_request). Not saved. Wrong service_id for this request. Valid service_id: queue.",
+      "db_message": "insert or update on table \"collection_configs\" violates foreign key constraint \"config_service_matches_request\"\nDETAIL:  Key (installation_id, request_id, service_id)=(install-07, R6, install-07) is not present in table \"signal_requests\"."
+    },
+    {
+      "ts": "2026-11-10T15:42:46.386+00:00",
+      "call": {
+        "request_id": "R6",
+        "service_id": "queue",
+        "signal_name": "r6_depth_of_job_queue",
+        "signal_type": "count",
+        "source_field": "jq_depth",
+        "unit": "count",
+        "sample_seconds": "10"
+      },
+      "result": "Saved as draft: r6_depth_of_job_queue <- jq_depth (count, every 10 s). A person will review it.",
+      "db_message": null
+    }
+  ],
+  "input_tokens": 58905,
+  "output_tokens": 2300,
+  "final_text": "All six requests have been saved as drafts and are awaiting review:\n```\nSaved as draft: r1_write_latency_media_volume <- mst_wr_lat (ms, every 10 s). A person will review it.\nSaved as draft: r2_files_wait_before_encoding <- enc_q_wait (s, every 10 s). A person will review it.\nSaved as draft: r3_api_response_time <- api_p95 (s, every 10 s). A person will review it.\nSaved as draft: r4_api_errors <- api_5xx (count, every 10 s). A person will review it.\nSaved as draft: r5_failed_class_creations <- cls_create_fail (count, every 60 s). A person will review it.\nSaved as draft: r6_depth_of_job_queue <- jq_depth (count, every 10 s). A person will review it.\n```\n"
+}

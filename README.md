@@ -169,10 +169,10 @@ The first call shows the loop. The name `Write latency of the media volume` brok
 
 ## Evidence
 
-The gists below are generated from the run files in `runs/` with the code of this repository. Links are added after publishing.
+The gists below are generated from the run files in `runs/2026-11-10/` with the code of this repository at the commit each gist names.
 
-- Agent learns a schema from database rejections, the cheapest model that saved all six configurations: link added after publishing
-- Bedrock models, one database: every model of the run, the results table and the rows each one kept: link added after publishing
-- Models that did not save all six configurations, published only when the runs have one: link added after publishing
+- [Agent learns a schema from database rejections](https://gist.github.com/ggiallo28/d5129b68ae47967b05bf408abf8b3422): the cheapest model that saved all six configurations
+- [Five Bedrock models, one database](https://gist.github.com/ggiallo28/c98aafca73328940e10e8b3d5a1e9e7c): every model of the run, the results table and the rows each one kept
+- [Models that did not save all six configurations](https://gist.github.com/ggiallo28/8050c47035e6fb68a5b099b1b4600249): their raw traces and why they stopped
 
 To regenerate them from a directory of run files: `uv run scripts/summarize_runs.py runs/<date> --rows` prints the table and the rows, and `uv run scripts/make_gists.py runs/<date>` writes the gists into `gists/`.
