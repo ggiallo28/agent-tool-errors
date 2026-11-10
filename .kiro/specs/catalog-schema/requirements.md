@@ -126,6 +126,7 @@ Out of scope: the tool layer, the agent, the experiment scripts and AWS deployme
 9. THE Schema_File SHALL define the table `allowed_units(signal_type, unit)` with primary key `(signal_type, unit)`.
 10. WHEN the Schema_File is executed, THE Schema_File SHALL load `allowed_units` with exactly five rows, the pairs `latency/ms`, `latency/s`, `ratio/percent`, `count/count` and `age/s`, each written as `signal_type/unit`.
 11. IF a statement violates a primary key, UNIQUE, foreign key or NOT NULL constraint defined in this requirement, THEN THE database SHALL reject the statement with a constraint-violation error and SHALL leave the affected tables unchanged.
+12. THE Schema_File SHALL define on `source_fields` a foreign key from `installation_id` to `installations`, with the default constraint name `source_fields_installation_id_fkey`, in addition to the foreign key of criterion 5.
 
 ### Requirement 7: Configuration, review and signal tables
 

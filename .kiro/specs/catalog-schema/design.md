@@ -269,6 +269,7 @@ The Data API cannot span statements in one transaction through `run`, so a failu
 ```mermaid
 erDiagram
     installations ||--o{ services : has
+    installations ||--o{ source_fields : owns
     services ||--o{ source_fields : exposes
     services ||--o{ signal_requests : "asked for"
     allowed_units ||--o{ collection_configs : "type/unit"
@@ -286,7 +287,7 @@ The last edge is enforced by the Signal_Trigger, not by a foreign key.
 |---|---|---|
 | `installations` | `installation_id` text, `name` text NOT NULL | PK `installation_id` |
 | `services` | `installation_id`, `service_id`, `name` NOT NULL | PK `(installation_id, service_id)`, FK `installation_id` to `installations` |
-| `source_fields` | `installation_id`, `service_id` NOT NULL, `field_name`, `unit` NOT NULL, `min_sample_s` integer NOT NULL, `max_sample_s` integer NOT NULL | PK `(installation_id, field_name)`, UNIQUE `(installation_id, field_name, unit)`, UNIQUE `(installation_id, service_id, field_name)`, FK `(installation_id, service_id)` to `services` |
+| `source_fields` | `installation_id`, `service_id` NOT NULL, `field_name`, `unit` NOT NULL, `min_sample_s` integer NOT NULL, `max_sample_s` integer NOT NULL | PK `(installation_id, field_name)`, UNIQUE `(installation_id, field_name, unit)`, UNIQUE `(installation_id, service_id, field_name)`, FK `installation_id` to `installations` (default name `source_fields_installation_id_fkey`), FK `(installation_id, service_id)` to `services` |
 | `signal_requests` | `installation_id`, `request_id`, `service_id` NOT NULL, `signal_type` NOT NULL, `sample_s` integer NOT NULL, `request_text` NOT NULL | PK `(installation_id, request_id)`, UNIQUE on each of `(installation_id, request_id, service_id)`, `(installation_id, request_id, signal_type)`, `(installation_id, request_id, sample_s)`, FK `(installation_id, service_id)` to `services` |
 | `allowed_units` | `signal_type`, `unit` | PK `(signal_type, unit)` |
 
