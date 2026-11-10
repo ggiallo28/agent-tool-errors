@@ -20,51 +20,9 @@ uv sync --group dev --group local
 
 ## Run it locally, paying only for the model
 
-This step only starts the database and applies the schema. No model is called at this point, so it costs nothing.
+The local path has five steps and they are in [Part 1: the database says no](#part-1-the-database-says-no). Steps 1 and 2 start the database and apply the schema. No model is called there, so they cost nothing. Step 4 is the only one that calls Bedrock and pays for the model.
 
-Start PostgreSQL 16 in Docker. The script prints one line, and `eval` puts it in your shell:
-
-```
-$ eval "$(scripts/local_db.sh up)"
-$ echo $OPSMEM_LOCAL_PG
-localhost:55432
-```
-
-Without `eval`, the script prints only this line and nothing else:
-
-```
-$ scripts/local_db.sh up
-export OPSMEM_LOCAL_PG=localhost:55432
-```
-
-The applier also wants `AWS_REGION` to be set, even in local mode, because the later steps call Bedrock. Without it the applier stops before it touches the database:
-
-```
-$ AWS_REGION= uv run scripts/apply_schema.py
-Configuration error, agent not started. Missing: AWS_REGION
-```
-
-Set it to `us-east-1` and apply the schema. This creates the tables, the rules, the two roles and their passwords, and loads the catalog from `manuals/`:
-
-```
-$ export AWS_REGION=us-east-1
-$ uv run scripts/apply_schema.py
-installations: 1
-services: 5
-fields: 9
-requests: 6
-```
-
-The schema is written for an empty database, so a second run is refused and changes nothing. The message tells you how to start again:
-
-```
-$ uv run scripts/apply_schema.py
-Error: the database is not empty, the schema already exists. Nothing was applied. To start again, recreate the database with scripts/local_db.sh up.
-```
-
-`scripts/local_db.sh down` removes the container.
-
-To run the writer agent once on `install-07`, this is the only step that calls Bedrock and pays for the model. The `--model` argument is required. `--mode` is `instructive` by default and can be `raw`:
+To run the writer agent once on `install-07`, the `--model` argument is required. `--mode` is `instructive` by default and can be `raw`:
 
 ```
 uv run scripts/run_writer.py --model us.amazon.nova-micro-v1:0
@@ -105,6 +63,50 @@ uv run pytest -m docker_script   # tests of scripts/local_db.sh, run alone
 The `docker_script` tests remove and recreate the container `opsmem-pg`, which the `local_pg` tests use. Run them in a separate session and never together. If you select both, pytest stops before running any test. After a `docker_script` session, run `eval "$(scripts/local_db.sh up)"` and the applier again before the next `local_pg` session.
 
 ## Part 1: the database says no
+
+### 1. Start the local database
+
+Start PostgreSQL 16 in Docker. The script creates the container `opsmem-pg`, publishes it on port 55432, waits until it accepts connections, and prints one line. `eval` puts that line in your shell:
+
+```
+$ eval "$(scripts/local_db.sh up)"
+$ echo $OPSMEM_LOCAL_PG
+localhost:55432
+```
+
+Without `eval`, the script prints only this line and nothing else:
+
+```
+$ scripts/local_db.sh up
+export OPSMEM_LOCAL_PG=localhost:55432
+```
+
+### 2. Apply the schema
+
+The applier also wants `AWS_REGION` to be set, even in local mode, because the later steps call Bedrock. Without it the applier stops before it touches the database:
+
+```
+$ AWS_REGION= uv run scripts/apply_schema.py
+Configuration error, agent not started. Missing: AWS_REGION
+```
+
+Set it to `us-east-1` and apply the schema. This creates the tables, the rules, the two roles and their passwords, and loads the catalog from `manuals/`:
+
+```
+$ export AWS_REGION=us-east-1
+$ uv run scripts/apply_schema.py
+installations: 1
+services: 5
+fields: 9
+requests: 6
+```
+
+The schema is written for an empty database, so a second run is refused and changes nothing. The message tells you how to start again:
+
+```
+$ uv run scripts/apply_schema.py
+Error: the database is not empty, the schema already exists. Nothing was applied. To start again, recreate the database with scripts/local_db.sh up.
+```
 
 ### 3. Verify without spending
 
@@ -166,6 +168,14 @@ run=single-instructive-1794320669 calls=19 follow_ups=1 escalated=None input_tok
 In this run the agent made 19 tool calls. 13 were rejected and 6 of 6 configurations were saved as drafts, one for each of the requests R1 to R6. The summary reports 1 follow-up, 48,132 input tokens and 2,330 output tokens.
 
 The first call shows the loop. The name `Write latency of the media volume` broke `collection_configs_signal_name_check`, and the rejection said what a valid name looks like. The next call fixed the name and then hit `config_field_exists`, which returned the nine valid `source_field` values. Request R1 took six calls in all: each rejection named one rule, and the agent changed what it named until the row was saved.
+
+### 5. Clean up
+
+```
+scripts/local_db.sh down
+```
+
+This removes the container `opsmem-pg` and the data in it. Run `eval "$(scripts/local_db.sh up)"` and the applier again to start from an empty database.
 
 Planned: deployment on Aurora Serverless v2 with the RDS Data API. The spec is in `.kiro/specs/aws-deploy`; it is not implemented yet, so everything in this README runs locally.
 
