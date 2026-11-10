@@ -1,0 +1,142 @@
+openapi: 3.0.3
+info:
+  title: Course platform, installation 07, stats endpoints
+  version: "7.0"
+  description: >
+    Fictional source used by the article and the experiment. Each service exposes one stats
+    endpoint. Every property of a stats object is a field that can be collected. x-unit is the
+    unit the source reports; x-sampling-min-s and x-sampling-max-s bound the supported sampling
+    interval in seconds.
+tags:
+  - name: media
+    description: media storage
+  - name: encoding
+    description: video encoding
+  - name: api
+    description: public API
+  - name: classes
+    description: class management
+  - name: queue
+    description: job queue
+paths:
+  /media/stats:
+    get:
+      tags: [media]
+      operationId: getMediaStats
+      responses:
+        "200":
+          description: Current media storage stats
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/MediaStats"}
+  /encoding/stats:
+    get:
+      tags: [encoding]
+      operationId: getEncodingStats
+      responses:
+        "200":
+          description: Current video encoding stats
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/EncodingStats"}
+  /api/stats:
+    get:
+      tags: [api]
+      operationId: getApiStats
+      responses:
+        "200":
+          description: Current public API stats
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/ApiStats"}
+  /classes/stats:
+    get:
+      tags: [classes]
+      operationId: getClassesStats
+      responses:
+        "200":
+          description: Current class management stats
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/ClassesStats"}
+  /queue/stats:
+    get:
+      tags: [queue]
+      operationId: getQueueStats
+      responses:
+        "200":
+          description: Current job queue stats
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/QueueStats"}
+components:
+  schemas:
+    MediaStats:
+      type: object
+      properties:
+        mst_wr_lat:
+          type: number
+          description: Write latency on the media volume, p95
+          x-unit: ms
+          x-sampling-min-s: 10
+          x-sampling-max-s: 300
+        mst_free_pct:
+          type: number
+          description: Free space on the media volume
+          x-unit: percent
+          x-sampling-min-s: 60
+          x-sampling-max-s: 3600
+    EncodingStats:
+      type: object
+      properties:
+        enc_q_wait:
+          type: number
+          description: Time a file waits before encoding starts, p95
+          x-unit: s
+          x-sampling-min-s: 10
+          x-sampling-max-s: 300
+        enc_active:
+          type: integer
+          description: Encoding jobs running now
+          x-unit: count
+          x-sampling-min-s: 10
+          x-sampling-max-s: 300
+    ApiStats:
+      type: object
+      properties:
+        api_p95:
+          type: number
+          description: Response time, p95. Seconds, not milliseconds
+          x-unit: s
+          x-sampling-min-s: 10
+          x-sampling-max-s: 300
+        api_5xx:
+          type: integer
+          description: 5xx responses in the sampling window
+          x-unit: count
+          x-sampling-min-s: 10
+          x-sampling-max-s: 300
+    ClassesStats:
+      type: object
+      properties:
+        cls_create_fail:
+          type: integer
+          description: Failed class creations in the window
+          x-unit: count
+          x-sampling-min-s: 30
+          x-sampling-max-s: 600
+    QueueStats:
+      type: object
+      properties:
+        jq_depth:
+          type: integer
+          description: Jobs waiting in the queue
+          x-unit: count
+          x-sampling-min-s: 10
+          x-sampling-max-s: 300
+        jq_oldest:
+          type: number
+          description: Age of the oldest waiting job
+          x-unit: s
+          x-sampling-min-s: 10
+          x-sampling-max-s: 300
