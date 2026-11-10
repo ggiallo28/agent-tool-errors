@@ -84,6 +84,18 @@ def test_catalog_keys():
         "UNIQUE (installation_id, request_id, sample_s)"])
 
 
+def test_source_fields_foreign_keys():
+    rows = connect_as("admin").run(
+        "SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint "
+        "WHERE contype = 'f' AND conrelid = 'source_fields'::regclass ORDER BY conname")
+    assert [tuple(r) for r in rows] == [
+        ("source_fields_installation_id_fkey",
+         "FOREIGN KEY (installation_id) REFERENCES installations(installation_id)"),
+        ("source_fields_installation_id_service_id_fkey",
+         "FOREIGN KEY (installation_id, service_id) REFERENCES services(installation_id, service_id)"),
+    ]
+
+
 def test_trigger_definitions():
     rows = connect_as("admin").run("SELECT pg_get_triggerdef(oid) FROM pg_trigger WHERE NOT tgisinternal ORDER BY tgname")
     assert [r[0] for r in rows] == [

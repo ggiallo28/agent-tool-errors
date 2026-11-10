@@ -44,6 +44,12 @@ def test_no_colon_followed_by_a_letter():
     assert not re.search(r":[A-Za-z_]", TEXT)
 
 
+def test_source_fields_references_installations_directly():
+    sql = table_sql("source_fields")
+    assert "FOREIGN KEY (installation_id) REFERENCES installations (installation_id)" in sql
+    assert "FOREIGN KEY (installation_id, service_id) REFERENCES services (installation_id, service_id)" in sql
+
+
 def test_foreign_keys_in_declared_order():
     sql = table_sql("collection_configs")
     positions = [sql.index(f"CONSTRAINT {n} FOREIGN KEY") for n in FOREIGN_KEYS]
