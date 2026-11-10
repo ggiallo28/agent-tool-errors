@@ -8,14 +8,14 @@ No task runs `scripts/run_experiment.py --yes` or `scripts/publish_gists.sh`. Th
 
 ## Tasks
 
-- [ ] 1. Model catalog and pure helpers
+- [x] 1. Model catalog and pure helpers
   - [x] 1.1 Create `models.json` and the first part of `opsmem/evaluation.py`
     - `models.json`: the five Model_Entries in the order of Requirement 1, with names, model identifiers, prices and `price_source` exactly as listed
     - In `opsmem/evaluation.py`: `PRICE_NOTE`, `MAX_TOOL_CALLS`, `TOKENS_IN_PER_CALL`, `TOKENS_OUT_PER_CALL`, `FULL_SAVE`, `CLOSING_LINE` as named constants, with a comment that explains the per-call token budget
     - `ModelEntry` (frozen dataclass), `load_catalog` (prices read as `Decimal(str(value))`), `cost_usd`, `format_cost` (`ROUND_HALF_UP`, 4 decimals, `$` prefix), `cost_upper_bound`, `is_dirty`
     - _Requirements: 1.1 to 1.7, 2.8, 5.5, 3.2, 3.3_
 
-  - [~] 1.2 Write unit tests for the catalog and the helpers
+  - [x] 1.2 Write unit tests for the catalog and the helpers
     - Create `tests/test_evaluation_core.py`
     - `models.json` equals the table of Requirement 1: labels, names, identifiers, prices, `price_source`, order
     - `format_cost` gives `$0.0022` for 51,844 input and 2,454 output tokens at 0.035/0.14 (6.3)
