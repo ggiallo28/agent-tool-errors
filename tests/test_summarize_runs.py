@@ -47,6 +47,10 @@ def test_same_input_twice_same_output():
 
 # --- repeated-runs: the published output stays the same -------------------------------------
 
+def test_output_on_published_runs_equals_the_golden_file():
+    golden = ROOT / "tests" / "fixtures" / "expected" / "summarize-2026-11-10.txt"
+    code, out, _ = run([str(ROOT / "runs" / "2026-11-10")])
+    assert code == 0 and out == golden.read_text(encoding="utf-8")
 
 
 def test_golden_output_on_2026_11_10():

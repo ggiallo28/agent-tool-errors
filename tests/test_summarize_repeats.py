@@ -88,16 +88,51 @@ def test_no_group_leaves_header_and_note():
         HEADER, "|---|---|---|---|---|---|---|", "", evaluation.REPEATS_NOTE]
 
 
+def test_summarizer_with_repeats_prints_both_tables():
+    code, out, _ = run([str(REPEATED), "--repeats"])
+    lines = out.splitlines()
+    assert code == 0
+    assert lines[2].startswith("| Claude Sonnet 4.6 | 6 of 6 |") and lines[3].startswith("| Claude Haiku 4.5 | 6 of 6 |")
+    assert lines[4] == "" and lines[5] == evaluation.PRICE_NOTE and lines[6] == "" and lines[7] == HEADER
+    assert out.endswith(evaluation.render_repeats(RUNS, CATALOG))
 
 
+def test_summarizer_without_repeats_leaves_repeated_and_raw_runs_out():
+    code, out, _ = run([str(REPEATED)])
+    assert code == 0 and "Nova Micro" not in out and "Ministral" not in out and "| Mode |" not in out
+    assert out == evaluation.render_table(evaluation.results_runs(RUNS), CATALOG)
 
 
+def test_directory_with_only_repeated_runs():
+    code, out, err = run([str(REPEATED_ONLY), "--repeats"])
+    assert code == 0 and err == "" and out.splitlines()[0] == HEADER
+    assert "| Model | Saved |" not in out
+    code, out, err = run([str(REPEATED_ONLY)])
+    assert code != 0 and out == "" and "--repeats" in err
 
 
+def test_empty_directory_is_an_error_with_repeats(tmp_path):
+    code, out, err = run([str(tmp_path), "--repeats"])
+    assert code != 0 and out == "" and "No run files" in err
 
 
+def test_run_file_without_mode_is_instructive_in_both_tables(tmp_path):
+    import json
+    import shutil
+    runs = tmp_path / "runs"
+    shutil.copytree(REPEATED, runs)
+    expected = run([str(runs), "--repeats"])
+    for path in runs.glob("*.json"):
+        data = json.loads(path.read_text())
+        if data.get("mode") == "instructive":
+            del data["mode"]
+            path.write_text(json.dumps(data))
+    assert run([str(runs), "--repeats"]) == expected
 
 
+def test_same_files_twice_same_output():
+    assert run([str(REPEATED), "--repeats"]) == run([str(REPEATED), "--repeats"])
+    assert run([str(REPEATED), "--rows"]) == run([str(REPEATED), "--rows"])
 
 
 def test_rejections_column_counts_both_forms_and_no_stopped_reply():
@@ -111,3 +146,17 @@ def test_rejections_column_counts_both_forms_and_no_stopped_reply():
     assert evaluation.repeats_row(entry, "raw", [run_])[-1] == "2"
     assert evaluation.count_rejections(trace) == 1  # the Results_Table keeps the model-evaluation definition
     assert evaluation.count_rejections_any_mode([item("STOPPED. x")]) == 0
+
+
+def test_repeated_run_without_numeric_suffix_is_recognised_from_its_fields(tmp_path):
+    import json
+    import shutil
+    runs = tmp_path / "runs"
+    shutil.copytree(REPEATED, runs)
+    data = json.loads((REPEATED / "nova-micro-04.json").read_text())
+    (runs / "nova-micro-extra.json").write_text(json.dumps(data))
+    (runs / "nova-micro-04.json").unlink()
+    code, out, _ = run([str(runs), "--repeats"])
+    assert code == 0 and "| Amazon Nova Micro | instructive | 4 |" in out
+    assert "nova-micro-extra.json" in out  # listed as a differing row of a Repeated_Run
+    assert "Nova Micro" not in out.split(HEADER)[0]  # and absent from the Results_Table
