@@ -29,7 +29,7 @@ class Rig:
         self.porcelain, self.fail, self.git_error = porcelain, set(fail), git_error
         self.result = result if result is not None else RESULT
 
-    def run_model(self, entry, task, run_id):
+    def run_model(self, entry, task, run_id, mode):
         self.events.append(("model", entry.label))
         self.models.append((entry.label, task, run_id))
         if entry.label in self.fail:
@@ -157,7 +157,7 @@ def test_model_arguments():
         rig.main(["--yes", "--models", "nova-micro"], out_dir)
         label, task, run_id = rig.models[0]
         assert task.startswith("Installation: install-07\nRequests:\nR1: ")
-        assert run_id == f"eval-nova-micro-{int(NOW.timestamp())}"
+        assert run_id == f"eval-nova-micro-instructive-01-{int(NOW.timestamp())}"
         data = files(out_dir)["nova-micro"]
         assert (data["mode"], data["model_id"], data["started_at"]) == (
             "instructive", "us.amazon.nova-micro-v1:0", "2026-11-10T14:00:00Z")

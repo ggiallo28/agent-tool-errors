@@ -153,11 +153,12 @@ def saved_rows(trace) -> list[tuple]:
 
 
 def load_runs(directory: Path) -> list[dict]:
-    """Every Run_File of a directory, sorted by file name, with `_label` taken from the file stem."""
+    """Every Run_File of a directory, sorted by file name, with `_label` (file stem) and `_file` (file name)."""
     runs = []
     for path in sorted(Path(directory).glob("*.json")):
         run = json.loads(path.read_text(encoding="utf-8"))
         run["_label"] = path.stem
+        run["_file"] = path.name
         runs.append(run)
     return runs
 
@@ -230,6 +231,156 @@ def identical_rows_statement(runs) -> str:
 
 def render_rows(rows) -> str:
     lines = [ROWS_HEADER, ROWS_RULE] + ["| " + " | ".join(_cell(v) for v in row) + " |" for row in rows]
+    return "\n".join(lines) + "\n"
+
+
+# --- Repeated runs and modes ----------------------------------------------------------------
+
+MODES = ("raw", "instructive")
+DEFAULT_MODE = "instructive"
+# In mode `raw` the tool returns "ERROR: " and the database message, with no REJECTED prefix.
+RAW_REJECTED_PREFIX = "ERROR: "
+
+REPEATS_HEADER = ("| Model | Mode | Runs | Saved 6 of 6 | Same rows as the first complete run "
+                  "| Tool calls (min to max) | Rejections (min to max) |")
+REPEATS_RULE = "|---|---|---|---|---|---|---|"
+REPEATS_NOTE = ("The signal name is not compared: two runs have the same rows when request, service, "
+                "field, type, unit and sampling are equal.")
+DIFFERING_TITLE = "Differing rows:"
+_ROW_FIELDS = ("service", "field", "type", "unit", "sampling")
+
+
+def is_repeated(run: dict) -> bool:
+    """A Repeated_Run holds `repeat` and `repeat_count`. The file name is never read."""
+    return "repeat" in run and "repeat_count" in run
+
+
+def run_mode(run: dict) -> str:
+    """The Mode of a run; a Run_File without `mode` is instructive."""
+    return str(run.get("mode", DEFAULT_MODE))
+
+
+def results_runs(runs) -> list[dict]:
+    """The Single_Runs with Mode instructive: the only runs of the Results_Table and of the gists."""
+    return [r for r in runs if not is_repeated(r) and run_mode(r) == DEFAULT_MODE]
+
+
+def base_name(label: str, mode: str) -> str:
+    return f"{label}-raw" if mode == "raw" else label
+
+
+def run_file_name(label: str, mode: str, repeat: int, repeat_count: int) -> str:
+    """`<base>.json` for a single run, `<base>-NN.json` for a repetition."""
+    base = base_name(label, mode)
+    return f"{base}.json" if repeat_count == 1 else f"{base}-{repeat:02d}.json"
+
+
+def make_run_id(label: str, mode: str, repeat: int, unix_seconds: int) -> str:
+    """Unique inside one command whatever the clock: label, Mode and repetition number."""
+    return f"eval-{label}-{mode}-{repeat:02d}-{unix_seconds}"
+
+
+def is_complete(run: dict) -> bool:
+    return not is_failed(run) and count_saved(run.get("trace", [])) == FULL_SAVE
+
+
+def row_keys(run: dict) -> dict[str, tuple]:
+    """request -> (service, field, type, unit, sampling). The signal name is not part of it."""
+    return {row[0]: row[1:] for row in saved_rows(run.get("trace", []))}
+
+
+def count_rejections_any_mode(trace) -> int:
+    """Rejection_Entries of a run in either Mode. A STOPPED reply is not a rejection."""
+    return sum(1 for r in _results(trace) if r.startswith((REJECTED_PREFIX, RAW_REJECTED_PREFIX)))
+
+
+def span(values: list[int]) -> str:
+    """`none`, a single number, or `min to max`."""
+    if not values:
+        return "none"
+    low, high = min(values), max(values)
+    return str(low) if low == high else f"{low} to {high}"
+
+
+def _file_of(run: dict) -> str:
+    return str(run.get("_file", ""))
+
+
+def repeat_groups(runs, catalog) -> list[tuple[ModelEntry, str, list[dict]]]:
+    """Runs grouped by (label, Mode), for the groups with a Repeated_Run or Mode raw.
+
+    Each group holds every run of that label and Mode, sorted by file name. Groups are ordered
+    by catalog position, then instructive before raw.
+    """
+    groups: dict[tuple[str, str], list[dict]] = {}
+    for run in runs:
+        groups.setdefault((entry_for(run, catalog).label, run_mode(run)), []).append(run)
+    position = {entry.label: i for i, entry in enumerate(catalog)}
+    by_label = {entry.label: entry for entry in catalog}
+    kept = [(label, mode, sorted(group, key=_file_of)) for (label, mode), group in groups.items()
+            if mode == "raw" or any(is_repeated(r) for r in group)]
+    kept.sort(key=lambda g: (position[g[0]], 0 if g[1] == DEFAULT_MODE else 1, g[1]))
+    return [(by_label[label], mode, group) for label, mode, group in kept]
+
+
+def _first_complete(runs) -> dict | None:
+    complete = [r for r in runs if is_complete(r)]
+    return complete[0] if complete else None
+
+
+def repeats_row(entry: ModelEntry, mode: str, runs) -> list[str]:
+    """One Repeats_Table line: Model, Mode, Runs, Saved 6 of 6, Same rows, Tool calls, Rejections."""
+    complete = [r for r in runs if is_complete(r)]
+    started = [r for r in runs if not is_failed(r)]
+    if complete:
+        first = row_keys(complete[0])
+        same = f"{sum(1 for r in complete if row_keys(r) == first)} of {len(complete)}"
+    else:
+        same = "none"
+    return [
+        entry.name,
+        mode,
+        str(len(runs)),
+        f"{len(complete)} of {len(runs)}",
+        same,
+        span([int(r.get("tool_calls", 0)) for r in started]),
+        span([count_rejections_any_mode(r.get("trace", [])) for r in started]),
+    ]
+
+
+def _row_text(key: tuple | None) -> str:
+    if key is None:
+        return "not saved"
+    return ", ".join(f"{name} {_cell(value)}" for name, value in zip(_ROW_FIELDS, key))
+
+
+def differing_rows(entry: ModelEntry, mode: str, runs) -> list[str]:
+    """One line per complete run and request whose Row_Key differs from the first complete run."""
+    first_run = _first_complete(runs)
+    if first_run is None:
+        return []
+    first = row_keys(first_run)
+    lines = []
+    for run in runs:
+        if run is first_run or not is_complete(run):
+            continue
+        keys = row_keys(run)
+        for request in sorted(set(first) | set(keys)):
+            if keys.get(request) != first.get(request):
+                lines.append(f"- {entry.name}, {mode}, {_file_of(run)}, {request}: {_row_text(keys.get(request))} "
+                             f"(first complete run {_file_of(first_run)}: {_row_text(first.get(request))})")
+    return lines
+
+
+def render_repeats(runs, catalog) -> str:
+    """The Repeats_Table, its note, and the Differing_Rows_Listing when complete runs differ."""
+    groups = repeat_groups(runs, catalog)
+    lines = [REPEATS_HEADER, REPEATS_RULE]
+    lines += ["| " + " | ".join(repeats_row(entry, mode, group)) + " |" for entry, mode, group in groups]
+    lines += ["", REPEATS_NOTE]
+    differing = [line for entry, mode, group in groups for line in differing_rows(entry, mode, group)]
+    if differing:
+        lines += ["", DIFFERING_TITLE, *differing]
     return "\n".join(lines) + "\n"
 
 

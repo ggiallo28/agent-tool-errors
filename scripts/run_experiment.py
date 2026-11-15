@@ -1,6 +1,10 @@
 """Run the writer once per model and save each result as a run file.
 
-    uv run scripts/run_experiment.py [--models label,...] [--out runs/<date>] [--yes]
+    uv run scripts/run_experiment.py [--models label,...] [--out runs/<date>]
+                                     [--repeat N] [--mode raw|instructive] [--yes]
+
+--repeat N runs each model N times (1 to 20) and names the files <label>-01.json to <label>-NN.json.
+--mode raw returns the database message untouched and names the files <label>-raw[-NN].json.
 
 Without --yes it only prints the models and the cost upper bound: no model is called.
 With --yes it refuses to start if tracked files have uncommitted changes, so every run
@@ -22,7 +26,8 @@ if str(ROOT) not in sys.path:
 from opsmem import db, evaluation, manual  # noqa: E402
 
 INSTALLATION_ID = "install-07"
-MODE = "instructive"
+MODES = evaluation.MODES
+MIN_REPEAT, MAX_REPEAT = 1, 20
 REQUIRED = ["CLUSTER_ARN", "AGENT_WRITER_SECRET_ARN", "AWS_REGION"]
 
 
@@ -39,10 +44,10 @@ def real_git(root: Path):
     return git
 
 
-def real_run_model(entry, task: str, run_id: str) -> dict:
+def real_run_model(entry, task: str, run_id: str, mode: str) -> dict:
     """One writer run for one model, on the agent_writer connection."""
     from opsmem.writer import RunContext, run_writer
-    ctx = RunContext(run_id, INSTALLATION_ID, entry.model_id, MODE, db.connect("agent_writer"))
+    ctx = RunContext(run_id, INSTALLATION_ID, entry.model_id, mode, db.connect("agent_writer"))
     return run_writer(ctx, task)
 
 
@@ -50,10 +55,25 @@ def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def repeat_arg(text: str) -> int:
+    """argparse type: a whole number from 1 to 20."""
+    message = f"must be a whole number from {MIN_REPEAT} to {MAX_REPEAT}, got {text!r}"
+    if not (text.isascii() and text.isdigit()):
+        raise argparse.ArgumentTypeError(message)
+    value = int(text)
+    if not MIN_REPEAT <= value <= MAX_REPEAT:
+        raise argparse.ArgumentTypeError(message)
+    return value
+
+
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description="Run the writer agent on several Bedrock models.")
     parser.add_argument("--models", help="comma-separated labels from models.json (default: all)")
     parser.add_argument("--out", type=Path, help="output directory (default: runs/<UTC date>)")
+    parser.add_argument("--repeat", type=repeat_arg, default=1,
+                        help=f"runs per model, {MIN_REPEAT} to {MAX_REPEAT} (default: 1)")
+    parser.add_argument("--mode", choices=MODES, default=evaluation.DEFAULT_MODE,
+                        help="rejection text of the runs: raw or instructive (default: instructive)")
     parser.add_argument("--yes", action="store_true", help="call the models; without it nothing is called")
     return parser.parse_args(argv)
 
@@ -83,9 +103,11 @@ def main(argv=None, *, run_model=None, git=None, now=None, check_config=None,
     print("Models:", file=stdout)
     for entry in selected:
         print(f"- {entry.name} ({entry.model_id})", file=stdout)
-    print(f"Cost upper bound: {evaluation.format_cost(evaluation.cost_upper_bound(selected))} "
+    repeats = f" for {args.repeat} runs of each model" if args.repeat > 1 else ""
+    print(f"Cost upper bound: {evaluation.format_cost(evaluation.cost_upper_bound(selected) * args.repeat)} "
           f"({evaluation.MAX_TOOL_CALLS} tool calls per run, {evaluation.TOKENS_IN_PER_CALL:,} input and "
-          f"{evaluation.TOKENS_OUT_PER_CALL:,} output tokens per call). {evaluation.PRICE_NOTE}", file=stdout)
+          f"{evaluation.TOKENS_OUT_PER_CALL:,} output tokens per call){repeats}. {evaluation.PRICE_NOTE}",
+          file=stdout)
     if not args.yes:
         print("Dry run: no model was called. Add --yes to run.", file=stdout)
         return 0
@@ -103,25 +125,28 @@ def main(argv=None, *, run_model=None, git=None, now=None, check_config=None,
     out.mkdir(parents=True, exist_ok=True)
     task = manual.agent_input(root, INSTALLATION_ID)
     for entry in selected:
-        path = out / f"{entry.label}.json"
-        if path.exists():
-            print(f"Skipped {path}: the file already exists.", file=stdout)
-            continue
-        started = now()
-        meta = {"model_id": entry.model_id, "label": entry.label, "mode": MODE, "commit": commit,
-                "started_at": started.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "run_id": f"eval-{entry.label}-{int(started.timestamp())}"}
-        try:
-            data = {**meta, **run_model(entry, task, meta["run_id"])}
-        except Exception as err:  # a model that fails to start is recorded and the next one runs
-            data = {**meta, "error": f"{type(err).__name__}: {err}"}
-        try:
-            with open(path, "x", encoding="utf-8") as handle:
-                json.dump(data, handle, indent=2)
-        except FileExistsError:
-            print(f"Skipped {path}: the file already exists.", file=stdout)
-            continue
-        print(f"Wrote {path}", file=stdout)
+        for repeat in range(1, args.repeat + 1):
+            path = out / evaluation.run_file_name(entry.label, args.mode, repeat, args.repeat)
+            if path.exists():
+                print(f"Skipped {path}: the file already exists.", file=stdout)
+                continue
+            started = now()
+            meta = {"model_id": entry.model_id, "label": entry.label, "mode": args.mode, "commit": commit,
+                    "started_at": started.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "run_id": evaluation.make_run_id(entry.label, args.mode, repeat, int(started.timestamp()))}
+            if args.repeat > 1:
+                meta.update(repeat=repeat, repeat_count=args.repeat)
+            try:
+                data = {**meta, **run_model(entry, task, meta["run_id"], args.mode)}
+            except Exception as err:  # a run that fails to start is recorded and the next one runs
+                data = {**meta, "error": f"{type(err).__name__}: {err}"}
+            try:
+                with open(path, "x", encoding="utf-8") as handle:
+                    json.dump(data, handle, indent=2)
+            except FileExistsError:
+                print(f"Skipped {path}: the file already exists.", file=stdout)
+                continue
+            print(f"Wrote {path}", file=stdout)
     return 0
 
 

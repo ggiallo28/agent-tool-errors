@@ -88,6 +88,16 @@ def test_every_file_ends_with_the_closing_line(tmp_path):
         assert data.decode().rstrip("\n").splitlines()[-1] == CLOSING_LINE
 
 
+def test_golden_gists_on_2026_11_10(tmp_path):
+    golden = ROOT / "tests" / "fixtures" / "expected" / "gists-2026-11-10"
+    code, _, err = generate(ROOT / "runs" / "2026-11-10", tmp_path)
+    assert code == 0 and err == ""
+    got, want = read_all(tmp_path), read_all(golden)
+    assert sorted(got) == sorted(want) and want
+    for name in want:
+        assert got[name] == want[name], name
+
+
 def test_empty_directory_is_an_error(tmp_path):
     code, _, err = generate(tmp_path, tmp_path / "gists")
     assert code != 0 and "No run files" in err
@@ -222,3 +232,45 @@ def test_property_mixed_commits(commits):
             (runs / f"{label}.json").write_text(json.dumps(data))
         code, _, err = generate(runs, Path(tmp) / "gists")
         assert code != 0 and all(c in err for c in set(commits)) and not (Path(tmp) / "gists").exists()
+
+
+# --- repeated-runs: gists use only the single runs in mode instructive -----------------------
+
+PUBLISHED = ROOT / "runs" / "2026-11-10"
+GOLDEN_GISTS = ROOT / "tests" / "fixtures" / "expected" / "gists-2026-11-10"
+REPEATED = ROOT / "tests" / "fixtures" / "runs-repeated"
+REPEATED_ONLY = ROOT / "tests" / "fixtures" / "runs-repeated-only"
+
+
+def test_gists_of_published_runs_equal_the_golden_folder(tmp_path):
+    code, _, _ = generate(PUBLISHED, tmp_path)
+    assert code == 0 and read_all(tmp_path) == read_all(GOLDEN_GISTS) and len(read_all(tmp_path)) == 3
+
+
+def test_repeated_and_raw_runs_change_no_gist(tmp_path):
+    runs = tmp_path / "runs"
+    shutil.copytree(PUBLISHED, runs)
+    commit = json.loads((runs / "nova-micro.json").read_text())["commit"]
+    for name in ("nova-micro-01.json", "nova-micro-04.json", "nova-micro-raw-01.json", "ministral-3-3b-02.json"):
+        data = json.loads((REPEATED / name).read_text())
+        data["commit"] = commit
+        (runs / name).write_text(json.dumps(data))
+    code, _, _ = generate(runs, tmp_path / "gists")
+    assert code == 0 and read_all(tmp_path / "gists") == read_all(GOLDEN_GISTS)
+
+
+def test_run_file_without_mode_is_instructive_for_the_gists(tmp_path):
+    runs = tmp_path / "runs"
+    shutil.copytree(FIXTURES, runs)
+    generate(runs, tmp_path / "with")
+    for path in runs.glob("*.json"):
+        data = json.loads(path.read_text())
+        data.pop("mode", None)
+        path.write_text(json.dumps(data))
+    code, _, _ = generate(runs, tmp_path / "without")
+    assert code == 0 and read_all(tmp_path / "with") == read_all(tmp_path / "without")
+
+
+def test_only_repeated_runs_write_no_gist(tmp_path):
+    code, _, err = generate(REPEATED_ONLY, tmp_path / "gists")
+    assert code != 0 and "No run files" in err and not (tmp_path / "gists").exists()

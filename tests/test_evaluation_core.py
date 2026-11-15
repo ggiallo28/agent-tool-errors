@@ -238,3 +238,39 @@ def test_property_identical_rows_statement(items):
     same = len({tuple(saved_rows(r["trace"])) for r in rs}) == 1
     assert identical_rows_statement(rs).endswith("identical rows." if same else "different rows.")
     assert all(count_saved(r["trace"]) == 6 for r in rs)
+
+
+# --- repeated-runs: selection and naming helpers ---------------------------------------------
+
+def test_is_repeated_reads_the_fields_never_the_name():
+    from opsmem import evaluation as ev
+    assert not ev.is_repeated({"_file": "claude-sonnet-4-6.json", "label": "claude-sonnet-4-6"})
+    assert not ev.is_repeated({"_file": "claude-haiku-4-5-01.json", "label": "claude-haiku-4-5"})
+    assert ev.is_repeated({"_file": "anything.json", "repeat": 2, "repeat_count": 3})
+    assert not ev.is_repeated({"repeat": 2}) and not ev.is_repeated({"repeat_count": 3})
+
+
+def test_run_mode_and_results_runs():
+    from opsmem import evaluation as ev
+    assert ev.run_mode({}) == "instructive" and ev.run_mode({"mode": "raw"}) == "raw"
+    single, raw = {"label": "a"}, {"label": "a", "mode": "raw"}
+    repeated = {"label": "a", "mode": "instructive", "repeat": 1, "repeat_count": 2}
+    assert ev.results_runs([single, raw, repeated]) == [single]
+
+
+def test_run_file_names_and_run_ids():
+    from opsmem import evaluation as ev
+    assert ev.run_file_name("nova-micro", "instructive", 1, 1) == "nova-micro.json"
+    assert ev.run_file_name("nova-micro", "raw", 1, 1) == "nova-micro-raw.json"
+    assert ev.run_file_name("nova-micro", "instructive", 3, 3) == "nova-micro-03.json"
+    assert ev.run_file_name("nova-micro", "raw", 2, 3) == "nova-micro-raw-02.json"
+    first, second = (ev.make_run_id("nova-micro", "raw", n, 1794325367) for n in (1, 2))
+    assert first == "eval-nova-micro-raw-01-1794325367" and first != second
+
+
+def test_load_runs_keeps_the_file_name():
+    from opsmem import evaluation as ev
+    from tests.helpers import ROOT
+    runs = ev.load_runs(ROOT / "tests" / "fixtures" / "runs-repeated")
+    assert [r["_file"] for r in runs] == sorted(r["_file"] for r in runs)
+    assert "nova-micro-raw-01.json" in [r["_file"] for r in runs]
