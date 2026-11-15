@@ -10,7 +10,11 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest==9.2.0", "hypothesis==6.140.0"]
+dev = [
+    "pytest==9.2.0",
+    "hypothesis==6.140.0",
+    "cfn-lint==1.60.0",
+]
 local = ["psycopg[binary]==3.3.8"]
 
 [tool.pytest.ini_options]
