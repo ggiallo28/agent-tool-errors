@@ -109,10 +109,73 @@ def test_property_results_selection(runs):
         assert ev.render_table(ev.results_runs(selected), CATALOG) == ev.render_table(selected, CATALOG)
 
 
+# Feature: repeated-runs, Property 12: Repeats_Table line set
+@PROPS
+@given(run_sets())
+def test_property_line_set(runs):
+    expected = [(label, mode) for (label, mode), group in groups_of(runs).items()
+                if mode == "raw" or any("repeat" in r and "repeat_count" in r for r in group)]
+    expected.sort(key=lambda g: (LABELS.index(g[0]), g[1] == "raw"))
+    lines = table_lines(ev.render_repeats(runs, CATALOG))
+    assert [tuple(cells(line)[:2]) for line in lines] == [(NAME[label], mode) for label, mode in expected]
+    text = ev.render_repeats(runs, CATALOG)
+    assert text.splitlines()[:2] == [ev.REPEATS_HEADER, ev.REPEATS_RULE] and ev.REPEATS_NOTE in text
 
 
+# Feature: repeated-runs, Property 13: Repeats_Table counts and spans
+# Feature: repeated-runs, Property 14: Same rows
+@PROPS
+@given(run_sets())
+def test_property_counts_spans_and_same_rows(runs):
+    lines = {tuple(cells(line)[:2]): cells(line)[2:] for line in table_lines(ev.render_repeats(runs, CATALOG))}
+    for (label, mode), group in groups_of(runs).items():
+        if (NAME[label], mode) not in lines:
+            continue
+        runs_cell, saved_cell, same_cell, calls_cell, rejections_cell = lines[(NAME[label], mode)]
+        complete = [r for r in group if "trace" in r and sum(e["result"] == SAVED for e in r["trace"]) == 6]
+        started = [r for r in group if "trace" in r]
+        assert runs_cell == str(len(group)) and saved_cell == f"{len(complete)} of {len(group)}"
+
+        def text(values):
+            if not values:
+                return "none"
+            return str(min(values)) if min(values) == max(values) else f"{min(values)} to {max(values)}"
+        assert calls_cell == text([r["tool_calls"] for r in started])
+        assert rejections_cell == text([sum(e["result"] == REJECTED[mode] for e in r["trace"]) for r in started])
+        if not complete:
+            assert same_cell == "none"
+        else:
+            def key(run):
+                return sorted((e["call"]["request_id"], e["call"]["source_field"]) for e in run["trace"]
+                              if e["result"] == SAVED)
+            assert same_cell == f"{sum(key(r) == key(complete[0]) for r in complete)} of {len(complete)}"
+    renamed = copy.deepcopy(runs)
+    for run in renamed:
+        for item in run.get("trace", []):
+            item["call"]["signal_name"] += "_other"
+    assert ev.render_repeats(renamed, CATALOG) == ev.render_repeats(runs, CATALOG)
 
 
+# Feature: repeated-runs, Property 15: Differing rows
+@PROPS
+@given(run_sets())
+def test_property_differing_rows(runs):
+    text = ev.render_repeats(runs, CATALOG)
+    expected = []
+    for entry_, mode, group in ev.repeat_groups(runs, CATALOG):
+        complete = [r for r in group if ev.is_complete(r)]
+        for run in complete[1:]:
+            for request in REQUESTS:
+                if ev.row_keys(run)[request] != ev.row_keys(complete[0])[request]:
+                    expected.append((entry_.name, mode, run["_file"], request, complete[0]["_file"]))
+    if not expected:
+        assert ev.DIFFERING_TITLE not in text
+        return
+    listing = text.split(ev.DIFFERING_TITLE + "\n", 1)[1].splitlines()
+    assert len(listing) == len(expected)
+    for line, (name, mode, file_name, request, first) in zip(listing, expected):
+        assert line.startswith(f"- {name}, {mode}, {file_name}, {request}: ")
+        assert f"(first complete run {first}: " in line and "field f" in line
 
 
 def write_runs(directory, runs):
