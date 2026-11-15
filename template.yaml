@@ -1,0 +1,102 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: opsmem on Aurora PostgreSQL Serverless v2 (Data API)
+
+Resources:
+  Cluster:
+    Type: AWS::RDS::DBCluster
+    DeletionPolicy: Delete          # demo stack: clean up leaves no final snapshot
+    UpdateReplacePolicy: Delete
+    Properties:
+      Engine: aurora-postgresql
+      EngineVersion: "16.15"        # standard (non-limitless) version; auto-pause needs 16.3 or later
+      DatabaseName: opsmemory
+      MasterUsername: opsadmin
+      ManageMasterUserPassword: true  # RDS keeps the admin password in its own secret
+      EnableHttpEndpoint: true      # RDS Data API: HTTPS and IAM, no VPC networking for the scripts
+      ServerlessV2ScalingConfiguration:
+        MinCapacity: 0              # pauses when idle, so storage is the only cost between runs
+        MaxCapacity: 2
+        SecondsUntilAutoPause: 600
+
+  WriterInstance:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      DBClusterIdentifier: !Ref Cluster
+      DBInstanceClass: db.serverless
+      Engine: aurora-postgresql
+
+  # One secret per database role: the Data API connects as whoever the secret names.
+  # No punctuation, because scripts/apply_schema.py refuses passwords with punctuation.
+  AgentWriterSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "agent_writer"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludePunctuation: true
+
+  ApproverSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "approver"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludePunctuation: true
+
+  # Reference for the permissions needed to run the scripts and the tests, in case you run them with
+  # a role of your own. It lists what they call: the Data API (opsmem/db.py), Secrets Manager
+  # (scripts/apply_schema.py) and Bedrock (Strands BedrockModel, which uses Converse).
+  # Copy the statements to your own user or role.
+  # CloudFormation needs CAPABILITY_IAM for it, which `sam deploy` passes by default.
+  RunnerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Reference permissions to run the opsmem scripts and tests against this stack
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:root   # any principal of this account allowed to assume it
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: opsmem-runner
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: DataApi            # execute_statement only: the code opens no transaction of its own
+                Effect: Allow
+                Action: rds-data:ExecuteStatement
+                Resource: !GetAtt Cluster.DBClusterArn
+              - Sid: RoleSecrets        # the Data API connects as the role a secret names, and the caller must read it
+                Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource:
+                  - !GetAtt Cluster.MasterUserSecret.SecretArn
+                  - !Ref AgentWriterSecret
+                  - !Ref ApproverSecret
+              - Sid: BedrockModels      # Converse calls InvokeModel; cross-region profiles need both ARNs below
+                Effect: Allow
+                Action:
+                  - bedrock:InvokeModel
+                  - bedrock:InvokeModelWithResponseStream
+                Resource:
+                  - !Sub arn:${AWS::Partition}:bedrock:*::foundation-model/*
+                  - !Sub arn:${AWS::Partition}:bedrock:*:${AWS::AccountId}:inference-profile/*
+
+Outputs:
+  ClusterArn:
+    Value: !GetAtt Cluster.DBClusterArn
+  AdminSecretArn:
+    Value: !GetAtt Cluster.MasterUserSecret.SecretArn
+  AgentWriterSecretArn:
+    Value: !Ref AgentWriterSecret
+  ApproverSecretArn:
+    Value: !Ref ApproverSecret
+  RunnerRoleArn:
+    Value: !GetAtt RunnerRole.Arn

@@ -1,0 +1,144 @@
+{
+  "pbtResults": {
+    "4.2 Write property tests for the environment script": {
+      "status": "passed",
+      "lastRunTimestamp": 1794330920584
+    },
+    "6.2 Write property test for the cleanup script": {
+      "status": "passed",
+      "lastRunTimestamp": 1794330920584
+    }
+  },
+  "executionHistory": {
+    "1. Add pinned cfn-lint dev dependency and check .gitignore": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794330588060
+      }
+    ],
+    "1.1 Add `cfn-lint==<exact latest version>` to the `dev` group in `pyproject.toml` and update `uv.lock` with `uv lock`": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794330588000
+      }
+    ],
+    "2.1 Create `template.yaml` and `tests/test_aws_template.py` with the template assertions": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794330624000
+      }
+    ],
+    "2.2 Add the `sam validate --lint` test to `tests/test_aws_template.py`": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794332407565
+      },
+      {
+        "executionId": "06b33c01-6bf0-42b9-827f-f9de401d303d",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794333027275
+      },
+      {
+        "executionId": "84bccc5a-e3e2-49d3-a1c6-e76ad54bed5b",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794333434286
+      },
+      {
+        "executionId": "84bccc5a-e3e2-49d3-a1c6-e76ad54bed5b",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794333472061
+      }
+    ],
+    "4. Add the environment script with its tests": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794330755060
+      }
+    ],
+    "4.1 Create `scripts/env.sh` and `tests/test_aws_scripts.py` with example tests": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794330695000
+      }
+    ],
+    "4.2 Write property tests for the environment script": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794330755000
+      }
+    ],
+    "6. Add the cleanup script with its tests": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794330920644
+      }
+    ],
+    "6.1 Create `scripts/cleanup.sh` and add Cleanup_Script example tests to `tests/test_aws_scripts.py`": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794330755500
+      }
+    ],
+    "6.2 Write property test for the cleanup script": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794330920584
+      }
+    ],
+    "7.1 Write README Part 1 steps 1, 3, 4, 5 and the Cost and operations section, with `tests/test_aws_readme.py`": [
+      {
+        "executionId": "dd527dbf-d39f-418e-8fa8-1fe5bef95fd2",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794331198000
+      }
+    ],
+    "2. Add the SAM template with its tests": [
+      {
+        "executionId": "84bccc5a-e3e2-49d3-a1c6-e76ad54bed5b",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794333472215
+      }
+    ],
+    "3. Checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "84bccc5a-e3e2-49d3-a1c6-e76ad54bed5b",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794333482673
+      },
+      {
+        "executionId": "84bccc5a-e3e2-49d3-a1c6-e76ad54bed5b",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794333639868
+      }
+    ],
+    "5. Checkpoint - Ensure all tests pass": [
+      {
+        "executionId": "84bccc5a-e3e2-49d3-a1c6-e76ad54bed5b",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794333482946
+      },
+      {
+        "executionId": "84bccc5a-e3e2-49d3-a1c6-e76ad54bed5b",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794333640322
+      }
+    ],
+    "7.2 STOP: ask the user to deploy and paste the real output of step 2": [
+      {
+        "executionId": "84bccc5a-e3e2-49d3-a1c6-e76ad54bed5b",
+        "chatSessionId": "sess_43dd5da4-5ed3-44f7-84e5-3f27a5131006",
+        "timestamp": 1794333651251
+      }
+    ]
+  }
+}
