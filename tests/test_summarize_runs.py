@@ -43,3 +43,14 @@ def test_empty_directory_is_an_error(tmp_path):
 
 def test_same_input_twice_same_output():
     assert run([str(FIXTURES), "--rows"]) == run([str(FIXTURES), "--rows"])
+
+
+# --- repeated-runs: the published output stays the same -------------------------------------
+
+
+
+def test_golden_output_on_2026_11_10():
+    code, out, err = run([str(ROOT / "runs" / "2026-11-10")])
+    golden = (ROOT / "tests" / "fixtures" / "expected" / "summarize-2026-11-10.txt").read_bytes()
+    assert code == 0 and err == ""
+    assert out.encode("utf-8") == golden

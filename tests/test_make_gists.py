@@ -88,6 +88,16 @@ def test_every_file_ends_with_the_closing_line(tmp_path):
         assert data.decode().rstrip("\n").splitlines()[-1] == CLOSING_LINE
 
 
+def test_golden_gists_on_2026_11_10(tmp_path):
+    golden = ROOT / "tests" / "fixtures" / "expected" / "gists-2026-11-10"
+    code, _, err = generate(ROOT / "runs" / "2026-11-10", tmp_path)
+    assert code == 0 and err == ""
+    got, want = read_all(tmp_path), read_all(golden)
+    assert sorted(got) == sorted(want) and want
+    for name in want:
+        assert got[name] == want[name], name
+
+
 def test_empty_directory_is_an_error(tmp_path):
     code, _, err = generate(tmp_path, tmp_path / "gists")
     assert code != 0 and "No run files" in err
@@ -222,3 +232,6 @@ def test_property_mixed_commits(commits):
             (runs / f"{label}.json").write_text(json.dumps(data))
         code, _, err = generate(runs, Path(tmp) / "gists")
         assert code != 0 and all(c in err for c in set(commits)) and not (Path(tmp) / "gists").exists()
+
+
+# --- repeated-runs: gists use only the single runs in mode instructive -----------------------
