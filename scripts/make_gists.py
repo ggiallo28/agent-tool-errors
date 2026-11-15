@@ -34,6 +34,7 @@ def main(argv=None, *, catalog_path=None, root=None, gists_dir=None, stdout=None
     gists_dir = Path(gists_dir) if gists_dir is not None else root / "gists"
     args = parse_args(argv)
     runs = evaluation.load_runs(args.run_dir) if args.run_dir.is_dir() else []
+    runs = evaluation.results_runs(runs)  # gists use only the single runs in mode instructive
     if not runs:
         print(f"No run files in {args.run_dir}", file=stderr)
         return 1
