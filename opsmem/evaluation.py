@@ -153,11 +153,12 @@ def saved_rows(trace) -> list[tuple]:
 
 
 def load_runs(directory: Path) -> list[dict]:
-    """Every Run_File of a directory, sorted by file name, with `_label` taken from the file stem."""
+    """Every Run_File of a directory, sorted by file name, with `_label` (file stem) and `_file` (file name)."""
     runs = []
     for path in sorted(Path(directory).glob("*.json")):
         run = json.loads(path.read_text(encoding="utf-8"))
         run["_label"] = path.stem
+        run["_file"] = path.name
         runs.append(run)
     return runs
 
@@ -231,6 +232,43 @@ def identical_rows_statement(runs) -> str:
 def render_rows(rows) -> str:
     lines = [ROWS_HEADER, ROWS_RULE] + ["| " + " | ".join(_cell(v) for v in row) + " |" for row in rows]
     return "\n".join(lines) + "\n"
+
+
+# --- Repeated runs and modes ----------------------------------------------------------------
+
+MODES = ("raw", "instructive")
+DEFAULT_MODE = "instructive"
+
+
+
+def is_repeated(run: dict) -> bool:
+    """A Repeated_Run holds `repeat` and `repeat_count`. The file name is never read."""
+    return "repeat" in run and "repeat_count" in run
+
+
+def run_mode(run: dict) -> str:
+    """The Mode of a run; a Run_File without `mode` is instructive."""
+    return str(run.get("mode", DEFAULT_MODE))
+
+
+def results_runs(runs) -> list[dict]:
+    """The Single_Runs with Mode instructive: the only runs of the Results_Table and of the gists."""
+    return [r for r in runs if not is_repeated(r) and run_mode(r) == DEFAULT_MODE]
+
+
+def base_name(label: str, mode: str) -> str:
+    return f"{label}-raw" if mode == "raw" else label
+
+
+def run_file_name(label: str, mode: str, repeat: int, repeat_count: int) -> str:
+    """`<base>.json` for a single run, `<base>-NN.json` for a repetition."""
+    base = base_name(label, mode)
+    return f"{base}.json" if repeat_count == 1 else f"{base}-{repeat:02d}.json"
+
+
+def make_run_id(label: str, mode: str, repeat: int, unix_seconds: int) -> str:
+    """Unique inside one command whatever the clock: label, Mode and repetition number."""
+    return f"eval-{label}-{mode}-{repeat:02d}-{unix_seconds}"
 
 
 # --- Gists ----------------------------------------------------------------------------------
