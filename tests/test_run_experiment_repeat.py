@@ -143,3 +143,101 @@ def test_repeat_fields_only_when_repeating(tmp_path):
 
 
 # --- Properties ---------------------------------------------------------------------------
+
+subsets = st.lists(st.sampled_from(LABELS), min_size=1, max_size=3, unique=True)
+modes = st.sampled_from(["raw", "instructive"])
+counts = st.integers(min_value=1, max_value=20)
+small = st.integers(min_value=1, max_value=4)
+
+
+def argv_for(labels, mode, count, yes=True):
+    return [*(["--yes"] if yes else []), "--models", ",".join(labels), "--repeat", str(count), "--mode", mode]
+
+
+# Feature: repeated-runs, Property 1: Invalid repeat or mode is refused
+@FAST
+@given(st.one_of(st.integers(max_value=0), st.integers(min_value=21, max_value=10**6),
+                 st.text(alphabet="abcxyz.-+ ", min_size=1, max_size=6)).map(str),
+       st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=1, max_size=12).filter(
+           lambda m: m not in ("raw", "instructive")))
+def test_property_invalid_repeat_or_mode(bad_repeat, bad_mode):
+    for argv in (["--repeat=" + bad_repeat], ["--mode", bad_mode]):
+        with tempfile.TemporaryDirectory() as out_dir:
+            rig = Rig()
+            with pytest.raises(SystemExit) as stop:
+                rig.main(["--yes", *argv], out_dir)
+            assert stop.value.code != 0 and rig.calls == [] and list(Path(out_dir).iterdir()) == []
+
+
+# Feature: repeated-runs, Property 2: Run count and order
+# Feature: repeated-runs, Property 3: Unique run identifiers
+# Feature: repeated-runs, Property 6: Mode reaches the run and the file
+# Feature: repeated-runs, Property 7: File names
+@FAST
+@given(subsets, modes, small)
+def test_property_count_order_ids_mode_and_names(labels, mode, count):
+    with tempfile.TemporaryDirectory() as out_dir:
+        rig = Rig()
+        code, _, _ = rig.main(argv_for(labels, mode, count), out_dir)
+        ordered = [e.label for e in CATALOG if e.label in labels]
+        assert code == 0 and [c[0] for c in rig.calls] == [label for label in ordered for _ in range(count)]
+        ids = [c[1] for c in rig.calls]
+        assert len(set(ids)) == len(ids)
+        for position, (label, run_id, got_mode) in enumerate(rig.calls):
+            assert got_mode == mode and run_id.startswith(f"eval-{label}-{mode}-{position % count + 1:02d}-")
+        got = files(out_dir)
+        assert list(got) == expected_names(labels, mode, count)
+        assert all(data["mode"] == mode for data in got.values())
+
+
+# Feature: repeated-runs, Property 4: Repetition fields
+# Feature: repeated-runs, Property 5: Failed start does not stop the repetitions
+@FAST
+@given(subsets, modes, small, st.sets(st.integers(min_value=1, max_value=12)))
+def test_property_repetition_fields_and_failures(labels, mode, count, failing):
+    with tempfile.TemporaryDirectory() as out_dir:
+        rig = Rig(fail=failing)
+        code, _, _ = rig.main(argv_for(labels, mode, count), out_dir)
+        got = files(out_dir)
+        assert code == 0 and list(got) == expected_names(labels, mode, count)
+        assert len(rig.calls) == len(labels) * count
+        failed = {rig.calls[i - 1][1] for i in failing if i <= len(rig.calls)}
+        for data in got.values():
+            assert ("error" in data and "trace" not in data) == (data["run_id"] in failed)
+            assert data["mode"] == mode
+            if count > 1:
+                assert data["repeat_count"] == count and 1 <= data["repeat"] <= count
+                assert f"-{data['repeat']:02d}-" in data["run_id"]
+            else:
+                assert "repeat" not in data and "repeat_count" not in data
+
+
+# Feature: repeated-runs, Property 8: Existing files are never overwritten
+@FAST
+@given(modes, small, st.data(), st.binary(max_size=32))
+def test_property_existing_files_untouched(mode, count, data, content):
+    names = expected_names(["nova-micro"], mode, count)
+    existing = data.draw(st.sets(st.sampled_from(names)))
+    with tempfile.TemporaryDirectory() as out_dir:
+        for name in existing:
+            (Path(out_dir) / name).write_bytes(content)
+        rig = Rig()
+        code, _, _ = rig.main(argv_for(["nova-micro"], mode, count), out_dir)
+        assert code == 0 and len(rig.calls) == count - len(existing)
+        assert all((Path(out_dir) / name).read_bytes() == content for name in existing)
+        assert sorted(p.name for p in Path(out_dir).glob("*.json")) == names
+
+
+# Feature: repeated-runs, Property 9: Cost bound scales with the Repeat_Count, and nothing runs without --yes
+@FAST
+@given(subsets, modes, counts)
+def test_property_cost_bound_and_no_run_without_yes(labels, mode, count):
+    with tempfile.TemporaryDirectory() as out_dir:
+        rig = Rig()
+        code, out, _ = rig.main(argv_for(labels, mode, count, yes=False), out_dir)
+        chosen = [e for e in CATALOG if e.label in labels]
+        bound = evaluation.cost_upper_bound(chosen) * count
+        assert code == 0 and rig.calls == [] and rig.git_calls == [] and list(Path(out_dir).iterdir()) == []
+        assert cost_line(out).startswith(f"Cost upper bound: {evaluation.format_cost(bound)} (")
+        assert (f"for {count} runs of each model" in cost_line(out)) == (count > 1)
+        assert evaluation.PRICE_NOTE in cost_line(out)
