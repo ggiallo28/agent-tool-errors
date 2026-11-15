@@ -1,0 +1,24 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Produce the golden files with the unchanged scripts and add the comparison tests": [
+      {
+        "executionId": "2aacc01f-8c47-4290-824e-a6942f2ed47a",
+        "chatSessionId": "sess_9ce757ff-a459-42e5-a32c-1758a8dfda1e",
+        "timestamp": 1794775235204
+      },
+      {
+        "executionId": "2aacc01f-8c47-4290-824e-a6942f2ed47a",
+        "chatSessionId": "sess_9ce757ff-a459-42e5-a32c-1758a8dfda1e",
+        "timestamp": 1794775843581
+      }
+    ],
+    "1. Golden files of the current output": [
+      {
+        "executionId": "2aacc01f-8c47-4290-824e-a6942f2ed47a",
+        "chatSessionId": "sess_9ce757ff-a459-42e5-a32c-1758a8dfda1e",
+        "timestamp": 1794775843629
+      }
+    ]
+  }
+}
