@@ -190,6 +190,26 @@ def summarize_main(argv):
     return code, out.getvalue(), err.getvalue()
 
 
+# Feature: repeated-runs, Property 16: Output without a Results_Table candidate
+# Feature: repeated-runs, Property 17: Deterministic output
+@PROPS
+@given(run_sets().filter(bool))
+def test_property_summarizer_output(runs):
+    with tempfile.TemporaryDirectory() as directory:
+        write_runs(directory, runs)
+        with_repeats = summarize_main([directory, "--repeats"])
+        without = summarize_main([directory])
+        assert with_repeats == summarize_main([directory, "--repeats"]) and without == summarize_main([directory])
+        loaded = ev.load_runs(Path(directory))
+        assert with_repeats[0] == 0 and with_repeats[1].endswith(ev.render_repeats(loaded, CATALOG))
+        if ev.results_runs(loaded):
+            assert without[0] == 0 and without[1] == ev.render_table(ev.results_runs(loaded), CATALOG)
+            assert with_repeats[1].startswith(without[1])
+        else:
+            assert without[0] != 0 and without[1] == "" and "--repeats" in without[2]
+            assert with_repeats[1] == ev.render_repeats(loaded, CATALOG) and with_repeats[2] == ""
+    with tempfile.TemporaryDirectory() as empty:
+        assert summarize_main([empty])[0] != 0 and summarize_main([empty, "--repeats"])[0] != 0
 
 
 # Feature: repeated-runs, Property 18: Gists use only single instructive runs
