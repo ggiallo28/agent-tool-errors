@@ -145,6 +145,8 @@ The instruction names the parameter to change and never a tool. I did this on pu
 
 The lookup of valid values must run with the `agent_writer` connection, as in the script. With a role that cannot read the catalog, the list comes back empty.
 
+The same script works on Aurora after `source scripts/env.sh` (see [On Aurora](#on-aurora)), with `OPSMEM_LOCAL_PG` unset.
+
 ### 4. One writer run
 
 Here I let the agent write the six configurations of `install-07`, with the instructive rejections from step 3. This is the first step that calls a model. I ran it on a fresh local database with `us.amazon.nova-micro-v1:0` in us-east-1:
@@ -169,6 +171,8 @@ In this run the agent made 19 tool calls. 13 were rejected and 6 of 6 configurat
 
 The first call shows the loop. The name `Write latency of the media volume` broke `collection_configs_signal_name_check`, and the rejection said what a valid name looks like. The next call fixed the name and then hit `config_field_exists`, which returned the nine valid `source_field` values. Request R1 took six calls in all: each rejection named one rule, and the agent changed what it named until the row was saved.
 
+The same command works on Aurora after `source scripts/env.sh` (see [On Aurora](#on-aurora)), with `OPSMEM_LOCAL_PG` unset.
+
 ### 5. Clean up
 
 ```
@@ -177,7 +181,43 @@ scripts/local_db.sh down
 
 This removes the container `opsmem-pg` and the data in it. Run `eval "$(scripts/local_db.sh up)"` and the applier again to start from an empty database.
 
-Planned: deployment on Aurora Serverless v2 with the RDS Data API. The spec is in `.kiro/specs/aws-deploy`; it is not implemented yet, so everything in this README runs locally.
+### On Aurora
+
+The same schema runs on Aurora PostgreSQL Serverless v2 through the RDS Data API. `template.yaml`, `scripts/env.sh` and `scripts/cleanup.sh` implement the spec in `.kiro/specs/aws-deploy`.
+
+Deploy the database and load its outputs into your shell:
+
+```bash
+sam deploy --guided --stack-name agent-tool-errors
+source scripts/env.sh
+```
+
+`samconfig.toml`, which `--guided` writes, is ignored by git. What `template.yaml` creates, and why:
+
+- Engine `aurora-postgresql` version `16.15`: a standard, non-limitless version, and auto-pause needs 16.3 or later.
+- `EnableHttpEndpoint: true`: the scripts reach the database through the RDS Data API over HTTPS with IAM, so no VPC networking is needed.
+- `MinCapacity: 0` with `SecondsUntilAutoPause: 600`: the instance pauses after ten idle minutes, so storage is the only cost between runs.
+- One `db.serverless` writer instance: a demo needs no reader.
+- `DeletionPolicy` and `UpdateReplacePolicy` set to `Delete` on cluster and instance: clean up leaves no final snapshot.
+- `ManageMasterUserPassword: true`: RDS keeps the password of the master user `opsadmin` in its own secret.
+- One secret each for `agent_writer` and `approver`, 32 characters with no punctuation: the Data API connects as whoever the secret names, and `scripts/apply_schema.py` refuses passwords with punctuation.
+- `RunnerRole`, the reference for the permissions you need to run the scripts and the tests against this stack, in case you run them with a role of your own. `rds-data:ExecuteStatement` on the cluster, `secretsmanager:GetSecretValue` on the three secrets, and `bedrock:InvokeModel` with `bedrock:InvokeModelWithResponseStream` on foundation models and inference profiles. Copy the statements to your own user or role. Its trust policy allows any principal of the same account that may call `sts:AssumeRole`, and CloudFormation needs `CAPABILITY_IAM` for it, which `sam deploy` passes by default.
+
+`scripts/env.sh` reads four of the stack outputs (the fifth, `RunnerRoleArn`, is only informative) and exports `CLUSTER_ARN`, `ADMIN_SECRET_ARN`, `AGENT_WRITER_SECRET_ARN`, `APPROVER_SECRET_ARN` and `AWS_REGION` (default `us-east-1`). It prints the cluster ARN and no secret. With these variables set and `OPSMEM_LOCAL_PG` unset, `scripts/apply_schema.py`, `scripts/run_writer.py` and `scripts/run_experiment.py` use Aurora with no code change.
+
+Delete everything when you are done:
+
+```bash
+scripts/cleanup.sh
+```
+
+It runs `sam delete --stack-name agent-tool-errors --no-prompts`, which deletes the cluster, the writer instance and the two role secrets. No final snapshot is kept. Secrets Manager keeps deleted secrets for a recovery window before removing them.
+
+### Cost and operations
+
+- With `MinCapacity: 0` storage is the only cost between runs.
+- Aurora Serverless v2 is billed per ACU-hour and storage per GB-month. See [Aurora pricing](https://aws.amazon.com/rds/aurora/pricing/) and [Bedrock pricing](https://aws.amazon.com/bedrock/pricing/) for the current prices.
+- The first call after a pause can raise `DatabaseResumingException`. `opsmem/db.py` retries it, waiting 5 to 30 seconds.
 
 ## Evidence
 
